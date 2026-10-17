@@ -6,11 +6,11 @@ jobs:
     steps:
       - name: SSH diagnostics
         env:
-          KEY: ${{ secrets.DEPLOY_KEY }}
+          KEY: ${{ secrets.DEPLOY_KEY_B64 }}
           HOST: ${{ secrets.DEPLOY_HOST }}
           USER: ${{ secrets.DEPLOY_USER }}
         run: |
-          mkdir -p ~/.ssh && printf "%s\n" "$KEY" | tr -d "\r" > ~/.ssh/id && chmod 600 ~/.ssh/id
+          mkdir -p ~/.ssh && echo "$KEY" | base64 -d > ~/.ssh/id && chmod 600 ~/.ssh/id
           ssh -i ~/.ssh/id -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 $USER@$HOST '
             echo "== whoami"; whoami; id; echo "== home"; pwd; ls -la ~;
             echo "== web dirs"; find ~ -maxdepth 3 -name "index.html" 2>/dev/null | head;
