@@ -1,0 +1,22 @@
+name: server-info
+on: workflow_dispatch
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH diagnostics
+        env:
+          KEY: ${{ secrets.DEPLOY_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          mkdir -p ~/.ssh && echo "$KEY" > ~/.ssh/id && chmod 600 ~/.ssh/id
+          ssh -i ~/.ssh/id -o StrictHostKeyChecking=accept-new -o ConnectTimeout=20 $USER@$HOST '
+            echo "== whoami"; whoami; id; echo "== home"; pwd; ls -la ~;
+            echo "== web dirs"; find ~ -maxdepth 3 -name "index.html" 2>/dev/null | head;
+            echo "== tools"; which php php8.3 php8.2 mysql mariadb nginx apache2 git crontab rsync 2>/dev/null; php -v 2>/dev/null | head -1; php -m 2>/dev/null | grep -iE "pdo|mysql|sqlite|curl|mbstring" | tr "\n" " "; echo;
+            echo "== sudo"; sudo -n true 2>&1 | head -1;
+            echo "== crontab"; crontab -l 2>&1 | head;
+            echo "== nginx sites"; ls /etc/nginx/sites-enabled 2>/dev/null; grep -rh "server_name\|root \|ssl_certificate " /etc/nginx/sites-enabled 2>/dev/null | head -20;
+            echo "== mysql sock"; ls /var/run/mysqld 2>/dev/null; systemctl is-active mysql mariadb 2>/dev/null;
+            echo "== disk"; df -h ~ | tail -1'
