@@ -1,0 +1,15 @@
+name: db-check
+on: workflow_dispatch
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          KEY: ${{ secrets.DEPLOY_KEY_B64 }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          DBP: ${{ secrets.DB_PASS }}
+        run: |
+          mkdir -p ~/.ssh && echo "$KEY" | base64 -d > ~/.ssh/id && chmod 600 ~/.ssh/id
+          P64=$(printf '%s' "$DBP" | base64 -w0)
+          ssh -i ~/.ssh/id -o StrictHostKeyChecking=accept-new $USER@$HOST "P=\$(echo $P64 | base64 -d); for U in yulialavri_r_usr yulialavri_r; do printf \"user \$U: \"; mysql -h localhost -u \$U -p\"\$P\" -e 'select database(), version(); show databases;' 2>&1 | tr '\n' ' '; echo; done"
