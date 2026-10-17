@@ -1,0 +1,20 @@
+name: deploy-site
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['.github/**']
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          KEY: ${{ secrets.DEPLOY_KEY_B64 }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          mkdir -p ~/.ssh && echo "$KEY" | base64 -d > ~/.ssh/id && chmod 600 ~/.ssh/id
+          rsync -az -e "ssh -i $HOME/.ssh/id -o StrictHostKeyChecking=accept-new" --exclude .git --exclude .github --exclude CNAME --exclude .nojekyll --exclude bot ./ $USER@$HOST:www/yulialavri.ru/
+          curl -s -o /dev/null -w "kod %{http_code}\n" https://yulialavri.ru/kod/
+          curl -s https://yulialavri.ru/kod/ | grep -o 'TG_BOT_URL: "[^"]*"'
