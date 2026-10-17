@@ -190,16 +190,56 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
   .pearl,.ring{animation:none}
   .screen,.bar i,.track i,.opt,.steps li,.steps .dot,.steps .dot svg{transition:none}
 }
+
+/* лавр (inline SVG-спрайт в начале body) */
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+.lf{fill:currentColor;fill-opacity:.1}
+.lf,.ln{vector-effect:non-scaling-stroke}
+.ln{fill:none}
+.lv{position:absolute;pointer-events:none;display:block}
+.lv svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lv use{stroke:url(#lg);stroke-width:1;color:#C9A97A}
+.lv .sh use{stroke:#A9804C;stroke-width:1.3;fill:none}
+.lv .sh{-webkit-mask-image:linear-gradient(105deg,transparent 40%,#000 50%,transparent 60%);mask-image:linear-gradient(105deg,transparent 40%,#000 50%,transparent 60%);-webkit-mask-size:300% 100%;mask-size:300% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;animation:glint 9s ease-in-out infinite}
+@keyframes glint{0%,30%{-webkit-mask-position:100% 0;mask-position:100% 0}75%,100%{-webkit-mask-position:0 0;mask-position:0 0}}
+.mono{position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#7A3A5D,var(--plum-deep) 70%);box-shadow:0 6px 14px -8px rgba(85,34,63,.7);flex:none}
+.mono svg{position:absolute;inset:3px;width:40px;height:40px}
+.mono use{stroke:url(#lg2);stroke-width:.9;color:#D6B684}
+.mono b{position:relative;font:600 13px/1 var(--serif);letter-spacing:-.05em;color:#EBD3A6;margin-top:1px}
+.intro{position:relative;padding-bottom:58px}
+.intro > :not(.lv){position:relative}
+.lv--tr{top:-6px;right:-18px;width:80px;height:104px;opacity:.75}
+.lv--bl svg{transform:scale(-1,-1)}
+.lv--bl{bottom:-6px;left:-18px;width:158px;height:63px;opacity:.6}
+.crest{display:flex;align-items:center;gap:6px;align-self:flex-start}
+.crest svg{width:46px;height:17px;flex:none;overflow:visible}
+.crest svg:first-child{transform:scaleX(-1)}
+.crest use,.ldiv use,.seal use{stroke:url(#lg);stroke-width:1;color:#C9A97A}
+.ldiv{display:flex;align-items:center;justify-content:center;gap:6px;margin:4px 0;opacity:.8}
+.ldiv::before,.ldiv::after{content:"";height:1px;width:56px;background:linear-gradient(90deg,transparent,rgba(184,154,116,.7))}
+.ldiv::after{transform:scaleX(-1)}
+.ldiv svg{width:52px;height:18px;flex:none;overflow:visible}
+.ldiv svg:first-of-type{transform:scaleX(-1)}
+.ldiv i{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);flex:none}
+.offer{position:relative}
+.seal{position:absolute;top:14px;right:14px;width:58px;height:58px;display:grid;place-items:center;opacity:.9;pointer-events:none}
+.seal svg{position:absolute;inset:0;width:100%;height:100%}
+.seal b{position:relative;font:600 19px/1 var(--serif);color:var(--plum);margin-top:-2px}
+.fprice{display:inline-block;margin:2px 0 4px;color:var(--tx);font-weight:600}
+@media (max-width:370px){.lv--tr{top:-10px;right:-16px;width:64px;height:83px}.lv--bl{left:-16px;width:130px;height:52px}.crest svg{width:34px}}
+@media (prefers-reduced-motion:reduce){.lv .sh{animation:none;display:none}}
 </style>
 </head>
 <body>
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DCC092"/><stop offset=".5" stop-color="#B8956A"/><stop offset="1" stop-color="#8C6A44"/></linearGradient><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2E0B8"/><stop offset=".55" stop-color="#D6B684"/><stop offset="1" stop-color="#B08D5E"/></linearGradient><symbol id="lws" viewBox="0 0 200 200"><g id="lwsh"><path class="lf" d="M100 174Q80.3 172.6 70.7 190Q90.5 191.4 100 174ZM100 174Q91.9 159.3 75.1 160.4Q83.2 175.2 100 174ZM69.9 167.6Q53 158.6 37.8 170.2Q54.7 179.2 69.9 167.6ZM69.9 167.6Q68.6 151.4 53.3 145.9Q54.6 162 69.9 167.6ZM45 149.5Q33.7 135 15.7 139.2Q27.1 153.7 45 149.5ZM45 149.5Q50.2 134.7 38.9 123.8Q33.7 138.6 45 149.5ZM29.6 122.9Q25.3 105.7 7.9 102.3Q12.2 119.6 29.6 122.9ZM29.6 122.9Q40 111.9 34.3 97.9Q24 108.9 29.6 122.9ZM26.4 92.3Q29.4 75.5 15.3 65.7Q12.4 82.5 26.4 92.3ZM26.4 92.3Q39.8 86.7 40.3 72.2Q26.9 77.8 26.4 92.3ZM35.9 63Q45.1 49.4 36.6 35.4Q27.4 49 35.9 63ZM35.9 63Q49.8 63.3 55.9 50.8Q42 50.5 35.9 63ZM56.5 40.1Q69.8 31.8 67.8 16.2Q54.5 24.6 56.5 40.1ZM56.5 40.1Q68.6 45.8 78.8 37.3Q66.7 31.6 56.5 40.1ZM79.6 28.9Q89.4 32.1 95.9 24.2Q86.2 21 79.6 28.9Z"/><path class="ln" d="M117.9 171.8A74 74 0 0 1 79.6 28.9M95.9 176.2L77.2 186.5M96.5 172.1L80.6 163.4M65.4 168L44.9 169.6M67.6 164.6L57 150.6M40.9 148.1L22.2 141.5M44.2 145.9L40.3 129.5M26.6 120L12.7 106.9M30.3 119.4L33.3 103.4M24.9 88.6L17.8 71.6M28.4 89.5L37.2 76.6M36 59.1L36.4 41.5M38.7 61.3L51.5 53.5M58.1 36.8L65.3 21.5M59.6 39.7L73.9 37.9M81.9 28.2L92.3 25.2"/></g><use href="#lwsh" transform="matrix(-1 0 0 1 200 0)"/></symbol><symbol id="ls" viewBox="2 11.2 163.9 51"><path class="lf" d="M17.3 50.1Q30.6 50.1 37.3 38.6Q24 38.6 17.3 50.1ZM17.3 50.1Q23.8 60.2 35.7 59.6Q29.3 49.5 17.3 50.1ZM36.5 49Q48.9 48.2 54.5 37Q42 37.8 36.5 49ZM36.5 49Q43.1 58.1 54.3 56.8Q47.6 47.7 36.5 49ZM56.2 46.6Q67.8 45.1 72.2 34.4Q60.7 35.8 56.2 46.6ZM56.2 46.6Q62.9 54.7 73.3 52.8Q66.5 44.8 56.2 46.6ZM76.4 42.9Q87.1 40.9 90.7 30.6Q80 32.6 76.4 42.9ZM76.4 42.9Q83.1 50 92.6 47.7Q85.9 40.6 76.4 42.9ZM97.2 37.8Q107 35.4 109.8 25.8Q100 28.2 97.2 37.8ZM97.2 37.8Q103.8 44.1 112.4 41.5Q105.9 35.2 97.2 37.8ZM118.6 31.4Q127.4 28.8 129.5 19.8Q120.7 22.4 118.6 31.4ZM118.6 31.4Q124.9 36.9 132.7 34.1Q126.4 28.7 118.6 31.4ZM150 20Q158.6 21.3 163.9 14.4Q155.3 13.2 150 20Z"/><path class="ln" d="M4 50Q70 52 150 20M20.1 48.5L32.9 41.1M19.9 51.4L31.7 57.5M39 47.3L50.5 39.6M39 50.1L50.4 55.1M58.4 44.9L68.7 37.1M58.6 47.5L69.5 51.4M78.4 41.2L87.5 33.3M78.7 43.6L89.1 46.7M99 36.1L107 28.4M99.4 38.3L109.1 40.7M120.1 29.8L127.1 22.4M120.5 31.8L129.6 33.5M151.9 19.2L160.9 15.7"/></symbol><symbol id="lc" viewBox="-2.8 -13.1 204.8 86"><path class="lf" d="M182.9 2.9Q163.6 4.1 155.1 21.4Q174.3 20.2 182.9 2.9ZM182.9 2.9Q172.6 -11.1 155.4 -9.1Q165.6 4.9 182.9 2.9ZM158.5 6.1Q140.6 8.7 133.9 25.5Q151.9 22.9 158.5 6.1ZM158.5 6.1Q147.8 -6.2 131.9 -3.1Q142.5 9.2 158.5 6.1ZM133.7 11.3Q117.1 15 112.2 31.2Q128.7 27.5 133.7 11.3ZM133.7 11.3Q122.8 0.6 108.1 4.7Q119 15.4 133.7 11.3ZM108.4 18.7Q93.3 23.2 89.7 38.6Q104.8 34 108.4 18.7ZM108.4 18.7Q97.6 9.5 84.2 14.3Q95 23.5 108.4 18.7ZM82.6 28.2Q68.9 33.3 66.6 47.7Q80.2 42.6 82.6 28.2ZM82.6 28.2Q72.1 20.3 60 25.6Q70.5 33.4 82.6 28.2ZM56.3 39.8Q44.1 45.2 42.7 58.6Q55 53.1 56.3 39.8ZM56.3 39.8Q46.2 33.1 35.5 38.6Q45.6 45.2 56.3 39.8ZM18 60Q5.4 60 -0.8 70.9Q11.7 70.9 18 60Z"/><path class="ln" d="M200 2Q115 4 18 60M179 5.5L161.2 17.3M179 1.2L161.4 -6.5M155.1 8.8L139.3 21.2M154.8 4.8L137.7 -1.1M130.7 14.1L116.9 26.8M130.1 10.4L113.8 6.2M105.7 21.5L93.8 34.2M105 18.1L89.5 15.2M80.3 30.9L70.1 43.4M79.4 27.8L65 26.1M54.4 42.4L45.7 54.4M53.4 39.6L40.1 38.9M15.4 61.5L3.3 68.5"/></symbol><symbol id="lt" viewBox="-10.3 -2 126.8 164.7"><path class="lf" d="M101.6 18.1Q98.1 35 111 46.4Q114.5 29.5 101.6 18.1ZM101.6 18.1Q87.1 23.6 84.7 39Q99.2 33.4 101.6 18.1ZM95.6 42.2Q90.2 57.5 100.8 69.8Q106.2 54.5 95.6 42.2ZM95.6 42.2Q81.3 45.6 77.2 59.6Q91.4 56.2 95.6 42.2ZM86.4 65Q79.4 78.5 87.6 91.2Q94.6 77.8 86.4 65ZM86.4 65Q72.8 66.3 67.1 78.7Q80.7 77.4 86.4 65ZM74 86.5Q65.9 98 71.9 110.8Q80 99.3 74 86.5ZM74 86.5Q61.3 85.9 54.6 96.7Q67.3 97.2 74 86.5ZM58.6 106.6Q49.7 116.3 53.7 128.7Q62.5 119.1 58.6 106.6ZM58.6 106.6Q47 104.6 39.5 113.7Q51.1 115.7 58.6 106.6ZM40 125.4Q30.9 133.3 33.1 145.1Q42.2 137.3 40 125.4ZM40 125.4Q29.6 122.3 21.8 129.8Q32.1 132.9 40 125.4ZM8 150Q-3.3 150.6 -8.3 160.7Q3 160.1 8 150Z"/><path class="ln" d="M104 0Q96 92 8 150M102.9 22L109 40.2M99.2 21L88.4 34.4M96.3 46.1L99.6 63.7M93 44.6L81.2 55.7M86.5 68.7L87.3 85.5M83.7 66.9L71.4 75.7M73.7 89.9L72.4 105.5M71.3 87.9L58.8 94.4M57.9 109.7L54.8 123.9M55.9 107.6L43.7 112.1M39 128.2L34.6 140.7M37.4 126L25.8 128.8M5.7 151.5L-4.7 158.4"/></symbol></defs></svg>
 <div class="pearl" aria-hidden="true"></div>
 <main class="wrap" id="app">
 
   <!-- 1. Вступление -->
   <section class="screen" id="s-intro">
     <div class="intro">
-      <div class="brand"><span class="mono">ЮЛ</span>Юлия Лаври · @yulia.lavri</div>
+      <span class="lv lv--tr" aria-hidden="true"><svg><use href="#lt"/></svg><svg class="sh"><use href="#lt"/></svg></span><span class="lv lv--bl" aria-hidden="true"><svg><use href="#lc"/></svg><svg class="sh"><use href="#lc"/></svg></span>
+      <div class="brand"><span class="mono" aria-hidden="true"><svg><use href="#lws"/></svg><b>ЮЛ</b></span>Юлия Лаври · @yulia.lavri</div>
       <span class="tag" style="align-self:flex-start">БЕСПЛАТНЫЙ ТЕСТ · 1 МИНУТА</span>
       <h1>Что выдаёт <em>дешевизну</em> в твоём образе?</h1>
       <p class="lead">6 коротких вопросов — и ты узнаешь, что именно «удешевляет» тебя и как это исправить из того, что уже висит в шкафу.</p>
@@ -251,14 +291,16 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
   <!-- 5. Результат -->
   <section class="screen" id="s-res">
     <div class="res">
-      <span class="tag">ТВОЙ ТИП ОБРАЗА</span>
+      <div class="crest"><svg aria-hidden="true"><use href="#ls"/></svg><span class="tag">ТВОЙ ТИП ОБРАЗА</span><svg aria-hidden="true"><use href="#ls"/></svg></div>
       <h1 id="r-title"></h1>
       <p class="quote" id="r-quote"></p>
       <p id="r-text"></p>
       <div class="dist card" id="r-dist" aria-label="Твои ответы по типам"></div>
+      <div class="ldiv" aria-hidden="true"><svg><use href="#ls"/></svg><i></i><svg><use href="#ls"/></svg></div>
       <div class="blk blk--risk card"><h4>ЧТО ВЫДАЁТ ДЕШЕВИЗНУ</h4><p id="r-give"></p></div>
       <div class="rules card"><h4>ТВОИ 3 ПРАВИЛА</h4><ol id="r-rules"></ol></div>
       <div class="blocks" id="r-blocks"></div>
+      <div class="ldiv" aria-hidden="true"><svg><use href="#ls"/></svg><i></i><svg><use href="#ls"/></svg></div>
       <div class="stepcard card">
         <p class="gift-h">ПОДАРОК · ЗАДАНИЕ НА 15 МИНУТ</p>
         <h4 id="r-task-title"></h4>
@@ -279,6 +321,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
       <p class="lead">Между «сейчас» и новой версией — не новый гардероб, а несколько привычек. И главная из них — как ты тратишь на себя.</p>
 
       <div class="offer card" id="offer">
+        <span class="seal" aria-hidden="true"><svg><use href="#lws"/></svg><b>14</b></span>
         <span class="tag" style="align-self:flex-start">СЛЕДУЮЩИЙ ШАГ</span>
         <h3>Денежный код: <em>практикум 14 дней</em></h3>
         <p id="o-lead"></p>
@@ -312,6 +355,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
   <footer>
     Материалы носят информационный характер и не являются индивидуальной консультацией.<br>
     <a id="l-offer" href="#" target="_blank" rel="noopener">Оферта</a> · <a id="l-privacy" href="#" target="_blank" rel="noopener">Политика конфиденциальности</a><br>
+    <span class="fprice">Стоимость: практикум «Денежный код: 14 дней» — 990 ₽</span><br>
     ИП Ковтун Сергей Владимирович · ИНН 230608247870 · ОГРНИП 319619600231880<br>
     © Юлия Лаври
   </footer>
