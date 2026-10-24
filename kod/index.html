@@ -287,7 +287,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
       <div class="ldiv" aria-hidden="true"><svg><use href="#ls"/></svg><i></i><svg><use href="#ls"/></svg></div>
       <div class="blocks" id="r-blocks"></div>
       <div class="ldiv" aria-hidden="true"><svg><use href="#ls"/></svg><i></i><svg><use href="#ls"/></svg></div>
-      <div class="stepcard card"><h4>Шаг на сегодня</h4><p id="r-step"></p></div>
+      <div class="stepcard card"><h4>А что с этим делать?</h4><p>Одним советом тут не обойтись: у твоего типа свои ловушки — и свой путь из них. Я разложила его на 14 коротких шагов, по 10–15 минут в день.</p></div>
       <button class="btn btn--main" data-go="next">Что с этим делать? →</button>
     </div>
   </section>
@@ -316,7 +316,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
         <a class="btn btn--main" id="o-pay" href="#" target="_blank" rel="noopener">Начать практикум</a>
         <p class="or">или</p>
         <a class="btn btn--ghost" id="o-tg" href="#" target="_blank" rel="noopener">Забрать результат в Telegram</a>
-        <p class="small" style="text-align:center" id="o-tg-note">Сохраню твой тип и шаг на сегодня, чтобы не потерялись.</p>
+        <p class="small" style="text-align:center" id="o-tg-note">Сохраню твой тип, чтобы не потерялся.</p>
         <div id="o-soon" hidden>
           <p class="lead" style="margin:4px 0 0">Практикум откроется совсем скоро. Подпишись — расскажу первой и пришлю цену для своих.</p>
           <a class="btn btn--main" id="o-ig" href="#" target="_blank" rel="noopener" style="margin-top:14px">Подписаться на @yulia.lavri</a>
@@ -346,7 +346,8 @@ var CONFIG = {
   INSTAGRAM_URL: "https://instagram.com/yulia.lavri", // пока нет оплаты и бота
   PRICE: "990 ₽",
   PRICE_OLD: "1 990 ₽",
-  TIMER_HOURS: 24                // честный таймер: дедлайн ставится при первом заходе и не сбрасывается; 0 = без таймера
+  PAY_VIA_BOT: true,             // кнопка «Начать практикум» ведёт в бот (оплата Prodamus привязана к Telegram)
+  TIMER_HOURS: 0                 // честный таймер: дедлайн ставится при первом заходе и не сбрасывается; 0 = без таймера
 };
 
 /* ===== КОНТЕНТ (тест А «Денежный код») ===== */
@@ -523,7 +524,6 @@ function renderResult(){
     el.innerHTML="<h4></h4><p></p>"; el.firstChild.textContent=x[0]; el.lastChild.textContent=x[1];
     bl.appendChild(el);
   });
-  $("r-step").textContent=r.step;
   show("s-res");
 }
 
@@ -541,10 +541,12 @@ function renderNew(){
   var tg=CONFIG.TG_BOT_URL;
   $("o-tg").href = isSet(tg) ? tg+(tg.indexOf("?")>-1?"&":"?")+"start=kod_"+result : "#";
   setupPrice();
-  var payOn=isSet(CONFIG.PAY_URL), tgOn=isSet(tg);
+  var tgOn=isSet(tg), viaBot=CONFIG.PAY_VIA_BOT&&tgOn, payOn=viaBot||isSet(CONFIG.PAY_URL);
+  if(viaBot) $("o-pay").href=$("o-tg").href; // оплата — в боте: доступ сразу привязан к Telegram
   if(!payOn){ ["o-timer","o-pay"].forEach(function(id){ $(id).style.display="none"; }); document.querySelector("#offer .price").style.display="none"; }
   document.querySelector("#offer .or").style.display=(payOn&&tgOn)?"":"none";
-  $("o-tg").style.display=tgOn?"":"none"; $("o-tg-note").style.display=tgOn?"":"none";
+  $("o-tg").style.display=(tgOn&&!viaBot)?"":"none"; $("o-tg-note").style.display=tgOn?"":"none";
+  if(viaBot){ document.querySelector("#offer .or").style.display="none"; $("o-tg-note").textContent="Кнопка откроет мой Telegram-бот: там результат, оплата и доступ к практикуму сразу после оплаты 🤍"; }
   $("o-soon").hidden=payOn||tgOn; $("o-ig").href=CONFIG.INSTAGRAM_URL;
   show("s-nv");
 }
