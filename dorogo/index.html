@@ -355,7 +355,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
   <footer>
     Материалы носят информационный характер и не являются индивидуальной консультацией.<br>
     <a id="l-offer" href="#" target="_blank" rel="noopener">Оферта</a> · <a id="l-privacy" href="#" target="_blank" rel="noopener">Политика конфиденциальности</a><br>
-    <span class="fprice">Стоимость: практикум «Денежный код: 14 дней» — 990 ₽</span><br>
+    <span class="fprice">Стоимость: практикум «Денежный код: 14 дней» — 990 ₽ (специальная цена; после перехода к оплате сохраняется 30 минут, затем 1 990 ₽)</span><br>
     ИП Ковтун Сергей Владимирович · ИНН 230608247870 · ОГРНИП 319619600231880<br>
     © Юлия Лаври
   </footer>
@@ -374,7 +374,7 @@ var CONFIG = {
   PRICE: "990 ₽",
   PRICE_OLD: "1 990 ₽",
   PAY_VIA_BOT: true,             // кнопка «Начать практикум» ведёт в бот (оплата Prodamus привязана к Telegram)
-  TIMER_HOURS: 0.5              // таймер 30 минут с показа результата; потом цена 1 990 ₽ (бот считает так же: время передаётся в ссылке)
+  TIMER_HOURS: 0                 // таймер на сайте выключен: 30 минут начинаются в боте с нажатия «Оплатить» (автор 24.10); здесь 990 ₽ и зачёркнутая 1 990 ₽
 };
 
 /* ===== КОНТЕНТ (подарок В «Дорого») ===== */
@@ -623,7 +623,7 @@ function setupPrice(){
   $("o-pay").href = isSet(CONFIG.PAY_URL)?CONFIG.PAY_URL:"#";
   var useTimer = CONFIG.TIMER_HOURS>0;
   var dl = parseInt(store("dor_deadline"),10);
-  if(!useTimer || !dl){ $("o-timer").hidden=true; $("o-old").textContent=""; return; } // без дедлайна нет и «зачёркнутой» цены
+  if(!useTimer || !dl){ $("o-timer").hidden=true; if(useTimer) $("o-old").textContent=""; return; } // без дедлайна нет и «зачёркнутой» цены
   clearInterval(timerId);
   var tick=function(){
     var left=dl-Date.now();
