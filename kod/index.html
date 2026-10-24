@@ -312,7 +312,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
           <li>Доступ в Telegram — проходишь в своём темпе</li>
         </ul>
         <div class="price"><span class="new" id="o-price">990 ₽</span><span class="old" id="o-old">1 990 ₽</span></div>
-        <div class="timer" id="o-timer" hidden>Цена для тебя действует ещё <b id="o-left">24:00:00</b></div>
+        <div class="timer" id="o-timer" hidden>Цена для тебя действует ещё <b id="o-left">00:30:00</b></div>
         <a class="btn btn--main" id="o-pay" href="#" target="_blank" rel="noopener">Начать практикум</a>
         <p class="or">или</p>
         <a class="btn btn--ghost" id="o-tg" href="#" target="_blank" rel="noopener">Забрать результат в Telegram</a>
@@ -347,7 +347,7 @@ var CONFIG = {
   PRICE: "990 ₽",
   PRICE_OLD: "1 990 ₽",
   PAY_VIA_BOT: true,             // кнопка «Начать практикум» ведёт в бот (оплата Prodamus привязана к Telegram)
-  TIMER_HOURS: 0                 // честный таймер: дедлайн ставится при первом заходе и не сбрасывается; 0 = без таймера
+  TIMER_HOURS: 0.5              // таймер 30 минут с показа результата; потом цена 1 990 ₽ (бот считает так же: время передаётся в ссылке)
 };
 
 /* ===== КОНТЕНТ (тест А «Денежный код») ===== */
@@ -539,7 +539,8 @@ function renderNew(){
   });
   $("o-lead").textContent="Тест показал, где утекают деньги. Практикум — про то, как это поменять: по одному небольшому действию в день, под тип «"+r.name+"».";
   var tg=CONFIG.TG_BOT_URL;
-  $("o-tg").href = isSet(tg) ? tg+(tg.indexOf("?")>-1?"&":"?")+"start=kod_"+result : "#";
+  ensureDeadline();
+  $("o-tg").href = isSet(tg) ? tg+(tg.indexOf("?")>-1?"&":"?")+"start=kod_"+result+startTs() : "#";
   setupPrice();
   var tgOn=isSet(tg), viaBot=CONFIG.PAY_VIA_BOT&&tgOn, payOn=viaBot||isSet(CONFIG.PAY_URL);
   if(viaBot) $("o-pay").href=$("o-tg").href; // оплата — в боте: доступ сразу привязан к Telegram
@@ -551,7 +552,10 @@ function renderNew(){
   show("s-nv");
 }
 
-/* честный таймер: дедлайн = первый заход + 24 ч, хранится в браузере и не сбрасывается */
+function ensureDeadline(){ if(CONFIG.TIMER_HOURS>0 && !store("kod_deadline")) store("kod_deadline", String(Date.now()+CONFIG.TIMER_HOURS*36e5)); }
+/* начало таймера (сек) — бот продолжит тот же отсчёт, а не начнёт заново */
+function startTs(){ var dl=parseInt(store("kod_deadline"),10); return dl ? "_"+Math.floor((dl-CONFIG.TIMER_HOURS*36e5)/1000) : ""; }
+/* честный таймер: дедлайн = показ предложения + 30 мин, хранится в браузере и не сбрасывается */
 function setupPrice(){
   $("o-price").textContent=CONFIG.PRICE; $("o-old").textContent=CONFIG.PRICE_OLD;
   $("o-pay").href = isSet(CONFIG.PAY_URL)?CONFIG.PAY_URL:"#";
@@ -565,7 +569,7 @@ function setupPrice(){
       clearInterval(timerId);
       $("o-timer").hidden=true;
       $("o-price").textContent=CONFIG.PRICE_OLD; $("o-old").textContent="";
-      $("o-pay").href=isSet(CONFIG.PAY_URL_FULL)?CONFIG.PAY_URL_FULL:"#";
+      if(!(CONFIG.PAY_VIA_BOT&&isSet(CONFIG.TG_BOT_URL))) $("o-pay").href=isSet(CONFIG.PAY_URL_FULL)?CONFIG.PAY_URL_FULL:"#";
       return;
     }
     var h=Math.floor(left/36e5), m=Math.floor(left%36e5/6e4), s=Math.floor(left%6e4/1e3);
@@ -577,7 +581,7 @@ function setupPrice(){
 
 /* фиксируем дедлайн при первом заходе */
 (function(){
-  if(CONFIG.TIMER_HOURS>0 && !store("kod_deadline")) store("kod_deadline", String(Date.now()+CONFIG.TIMER_HOURS*36e5));
+  /* дедлайн ставится при показе предложения (см. ensureDeadline) */
 })();
 
 /* заглушки ссылок: не уводим на несуществующий адрес */
