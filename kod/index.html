@@ -216,6 +216,31 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
 .fprice{display:inline-block;margin:2px 0 4px;color:var(--tx);font-weight:600}
 @media (max-width:370px){.lv--tr{top:-10px;right:-16px;width:64px;height:83px}.lv--bl{left:-16px;width:130px;height:52px}.crest svg{width:34px}}
 @media (prefers-reduced-motion:reduce){.lv .sh{animation:none;display:none}}
+
+.scale{display:flex;justify-content:space-between;font-size:13px;letter-spacing:.08em;color:var(--mut);margin-top:6px}
+.scale-bar{height:8px;border-radius:6px;background:rgba(110,47,81,.1);overflow:hidden}
+.scale-bar i{display:block;height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--rose),var(--gold));transition:width .8s ease}
+.kcards{display:flex;flex-direction:column;gap:14px}
+.kcard{padding:20px 20px 18px;position:relative;overflow:hidden}
+.kcard .kn{font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--plum)}
+.kcard h4{font-family:var(--serif);font-size:22px;font-weight:500;margin:8px 0 6px;color:var(--tx)}
+.kcard p{margin:0;line-height:1.55}
+.kcard .kstep{margin-top:10px;font-style:italic;color:var(--plum)}
+.kcard.locked .kbody{filter:blur(7px);user-select:none;pointer-events:none}
+.kcard .kopen{margin-top:14px}
+.kcard.locked .kopen{position:relative}
+.chat{padding:18px 18px 16px}
+.chat-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.chat-head small{display:block;color:#4CAF7A;font-size:12px}
+.chat-msg{background:#fff;border-radius:16px 16px 16px 4px;padding:12px 14px;margin:0 0 12px;line-height:1.5}
+.wishes{display:flex;flex-direction:column;gap:8px}
+.wish{text-align:left;padding:13px 15px;border-radius:14px;border:1.5px solid var(--rose);background:rgba(255,255,255,.75);color:var(--tx);font:inherit;cursor:pointer}
+.wish:hover{border-color:var(--plum)}
+.always{padding:18px 20px}
+.always h4{margin:0 0 8px;font-size:13px;letter-spacing:.14em;color:var(--plum)}
+.always ul{margin:0;padding-left:18px;line-height:1.6}
+.pnow{display:block;font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--plum);width:100%}
+.tglink{display:block;text-align:center;margin-top:10px;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -276,51 +301,45 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
     </div>
   </section>
 
-  <!-- 5. Результат -->
+  <!-- 5. Результат: 3 карты, третья закрыта; затем «чат» про желание -->
   <section class="screen" id="s-res">
     <div class="res">
       <div class="crest"><svg aria-hidden="true"><use href="#ls"/></svg><span class="tag">ТВОЙ ДЕНЕЖНЫЙ КОД</span><svg aria-hidden="true"><use href="#ls"/></svg></div>
       <h1 id="r-title"></h1>
       <p class="quote" id="r-quote"></p>
-      <p id="r-text"></p>
-      <div class="dist card" id="r-dist" aria-label="Твои ответы по типам"></div>
-      <div class="ldiv" aria-hidden="true"><svg><use href="#ls"/></svg><i></i><svg><use href="#ls"/></svg></div>
-      <div class="blocks" id="r-blocks"></div>
-      <div class="ldiv" aria-hidden="true"><svg><use href="#ls"/></svg><i></i><svg><use href="#ls"/></svg></div>
-      <div class="stepcard card"><h4>А что с этим делать?</h4><p>Одним советом тут не обойтись: у твоего типа свои ловушки — и свой путь из них. Я разложила его на 14 коротких шагов, по 10–15 минут в день.</p></div>
-      <button class="btn btn--main" data-go="next">Что с этим делать? →</button>
+      <div class="scale"><span>Замок</span><span>Поток</span></div>
+      <div class="scale-bar"><i id="r-scale"></i></div>
+      <div class="kcards" id="r-cards"></div>
+      <div class="chat card" id="r-chat" hidden>
+        <div class="chat-head"><span class="mono">Ю</span><div><b>Юлия</b><small>онлайн</small></div></div>
+        <p class="chat-msg" id="r-chat-intro"></p>
+        <div class="wishes" id="r-wishes"></div>
+      </div>
+      <button class="again" type="button" data-go="restart">Пройти тест заново</button>
     </div>
   </section>
 
-  <!-- 6. Новая версия + предложение -->
+  <!-- 6. Страница под желание: история, практикум, цена с таймером 60 минут, оплата на сайте -->
   <section class="screen" id="s-nv">
     <div class="nv">
       <span class="tag" style="align-self:flex-start" id="nv-tag"></span>
-      <h2>Сейчас → <em>твоя новая версия</em></h2>
-      <div class="pairs" id="nv-pairs"></div>
-      <p class="lead">Между «сейчас» и новой версией — не годы, а несколько привычек с деньгами. Их можно поменять по одной.</p>
+      <h2 id="nv-wish"></h2>
+      <p class="lead" id="nv-hook"></p>
+      <div class="card always"><h4>Я хочу, чтобы так было всегда</h4><ul id="nv-always"></ul></div>
+      <p class="lead" id="nv-bridge"></p>
+      <p class="lead" id="nv-imagine"></p>
 
       <div class="offer card" id="offer">
         <span class="seal" aria-hidden="true"><svg><use href="#lws"/></svg><b>14</b></span>
         <span class="tag" style="align-self:flex-start">ДЛЯ ТВОЕГО ТИПА</span>
-        <h3>Денежный код: <em>практикум 14 дней</em></h3>
-        <p id="o-lead"></p>
-        <ul>
-          <li>14 коротких заданий — по одному в день, 10–15 минут</li>
-          <li>Задания под твой тип, а не «для всех»</li>
-          <li>Только действия с деньгами, без долгой теории</li>
-          <li>Доступ в Telegram — проходишь в своём темпе</li>
-        </ul>
-        <div class="price"><span class="new" id="o-price">990 ₽</span><span class="old" id="o-old">1 990 ₽</span></div>
-        <div class="timer" id="o-timer" hidden>Цена для тебя действует ещё <b id="o-left">00:30:00</b></div>
-        <a class="btn btn--main" id="o-pay" href="#" target="_blank" rel="noopener">Начать практикум</a>
-        <p class="or">или</p>
-        <a class="btn btn--ghost" id="o-tg" href="#" target="_blank" rel="noopener">Забрать результат в Telegram</a>
-        <p class="small" style="text-align:center" id="o-tg-note">Сохраню твой тип, чтобы не потерялся.</p>
-        <div id="o-soon" hidden>
-          <p class="lead" style="margin:4px 0 0">Практикум откроется совсем скоро. Подпишись — расскажу первой и пришлю цену для своих.</p>
-          <a class="btn btn--main" id="o-ig" href="#" target="_blank" rel="noopener" style="margin-top:14px">Подписаться на @yulia.lavri</a>
-        </div>
+        <h3 id="o-title">Денежный код: <em>практикум 14 дней</em></h3>
+        <ul id="o-bullets"></ul>
+        <div class="price"><span class="pnow">СЕЙЧАС</span><span class="new" id="o-price">990 ₽</span><span class="old" id="o-old">1 990 ₽</span></div>
+        <div class="timer" id="o-timer" hidden>осталось <b id="o-left">60:00</b> · потом <span id="o-full">1 990 ₽</span></div>
+        <a class="btn btn--main" id="o-pay" href="#">Начать практикум за 990 ₽ →</a>
+        <p class="small" style="text-align:center">Один платёж · без подписки · доступ к практикуму в Telegram сразу после оплаты</p>
+        <p class="small" style="text-align:center"><a id="l-offer2" href="/oferta.html" target="_blank" rel="noopener">Оферта</a> · <a href="/refund.html" target="_blank" rel="noopener">Возврат</a> · <a href="/privacy.html" target="_blank" rel="noopener">Персональные данные</a></p>
+        <a class="small tglink" id="o-tg" href="#" target="_blank" rel="noopener">Пока просто забрать результат в Telegram</a>
       </div>
       <button class="again" type="button" data-go="restart">Пройти тест заново</button>
     </div>
@@ -503,51 +522,110 @@ function analyze(){
   setTimeout(renderResult,delays[3]);
 }
 
+/* ===== ТЕКСТЫ НОВОЙ СХЕМЫ (СТАНДАРТ п. 27). Временные — заменятся текстами контент-чата из сайт/kod_texts.json ===== */
+var KT = {
+  types:{
+    u:{card1:{title:"Как ты думаешь о деньгах", text:T.u.text},
+       card2:{title:"Твоя сила", text:"Ты умеешь заботиться и держать всё на себе. Эта сила — настоящий ресурс, и её можно направить и на себя."},
+       card3:{title:"Что мешает деньгам прийти", text:T.u.b[0][1]+" "+T.u.b[2][1], step:"У этого замка есть ключ: поставить себя в свой же список — не последней."}},
+    s:{card1:{title:"Как ты думаешь о деньгах", text:T.s.text},
+       card2:{title:"Твоя сила", text:"Ты аккуратна и умеешь считать. Это основа, на которой деньги копятся быстрее всего."},
+       card3:{title:"Что мешает деньгам прийти", text:T.s.b[0][1]+" "+T.s.b[2][1], step:"У этого замка есть ключ: назвать свою цену спокойно — и не оправдываться."}},
+    t:{card1:{title:"Как ты думаешь о деньгах", text:T.t.text},
+       card2:{title:"Твоя сила", text:"Ты внимательна к деньгам и не живёшь вслепую. Эта осторожность может стать спокойным контролем."},
+       card3:{title:"Что мешает деньгам прийти", text:T.t.b[0][1]+" "+T.t.b[2][1], step:"У этого замка есть ключ: отделить реальные цифры от привычной тревоги."}},
+    z:{card1:{title:"Как ты думаешь о деньгах", text:T.z.text},
+       card2:{title:"Твоя сила", text:"Ты умеешь доверять и принимать. Это редкое качество — его можно дополнить своей опорой."},
+       card3:{title:"Что мешает деньгам прийти", text:T.z.b[0][1]+" "+T.z.b[2][1], step:"У этого замка есть ключ: своя опора, которая не зависит от чужого настроения."}}
+  },
+  chat:{intro:"Теперь я хочу понять, ради чего тебе на самом деле нужны деньги. По твоему денежному коду я уже вижу, что для тебя сейчас главное. Проверь себя 👇"},
+  wishes:[
+    {id:"svoi", label:"Хочу, чтобы у меня были свои деньги", landing:{hook:"Представь: у тебя есть деньги, о которых не нужно никого спрашивать. Свой счёт, своя сумма — и решение, на что её потратить, принимаешь ты.", always:["Есть свой запас, который не уходит в общий котёл","Покупаю себе — и не объясняю, зачем","Знаю, сколько у меня есть, до рубля"], bridge:"Свои деньги появляются не от большой зарплаты, а от нескольких привычек: отделить своё, назвать цену, перестать отдавать «на всех». Практикум «Денежный код» — 14 коротких шагов под твой тип, по 10–15 минут в день.", imagine:"Представь следующий месяц: на счёте «Моё» лежит первая сумма. Небольшая. Но твоя."}},
+    {id:"nezav", label:"Хочу перестать зависеть от мужчины", landing:{hook:"Представь: ты остаёшься рядом с мужчиной потому, что хочешь, а не потому, что без него не на что жить.", always:["Есть своя опора, даже если всё изменится","Говорю о деньгах спокойно, без намёков","Мои решения — мои"], bridge:"Зависимость держится не на мужчине, а на отсутствии своей цифры и своего плана. Практикум «Денежный код» — 14 дней, по одному небольшому шагу: от «сколько стоит мой месяц» до своего денежного правила.", imagine:"Представь следующий месяц: ты знаешь, сколько продержишься сама. И от этого спокойнее — даже рядом с ним."}},
+    {id:"kopit", label:"Хочу начать копить и не снимать отложенное", landing:{hook:"Представь: деньги, которые ты отложила, остаются на месте. Не уходят на «срочное», не тают к концу месяца.", always:["Откладываю сначала себе, потом всё остальное","Запас растёт, а не обнуляется","Трата из запаса — моё решение, а не срыв"], bridge:"Копить мешает не сила воли, а то, что у денег нет своего места и правила. В практикуме ты заведёшь счёт «Моё», настроишь перевод и напишешь свои денежные правила — по шагу в день.", imagine:"Представь следующий месяц: отложенное на месте. И ещё немного сверху."}},
+    {id:"cena", label:"Хочу назвать свою цену и не оправдываться", landing:{hook:"Представь: ты называешь цену — и молчишь. Без «если это не дорого», без скидки заранее.", always:["Знаю, сколько стоит моё время","Прошу прибавку спокойно","Не отдаю бесплатно то, что дорого"], bridge:"Цену занижают не из скромности, а потому что она никогда не была посчитана. В практикуме ты составишь свой прайс и сценарий разговора о деньгах — с мужчиной, с работодателем, с клиентом.", imagine:"Представь следующий месяц: один спокойный разговор о деньгах уже позади. И он прошёл лучше, чем ты боялась."}},
+    {id:"sebe", label:"Хочу тратить на себя без чувства вины", landing:{hook:"Представь: ты покупаешь себе то, что хочешь, — и не объясняешь, «это по скидке» или «для работы».", always:["Себе — не последней","Трачу на себя спокойно, без оправданий","Радуюсь покупке, а не жалею о ней"], bridge:"Вина за траты на себя — привычка, а не характер. В практикуме ты сделаешь первую покупку без объяснений и напишешь правило, которое защитит «себе» от «потом».", imagine:"Представь следующий месяц: ты носишь вещь, купленную себе. Просто потому, что захотела."}},
+    {id:"spok", label:"Хочу спокойно думать о деньгах, без тревоги", landing:{hook:"Представь: ты открываешь банк — и не сжимаешься. Цифры понятны, план есть, «а вдруг не хватит» больше не командует.", always:["Знаю свой запас в месяцах","Смотрю цифры раз в неделю, а не когда страшно","Решения о деньгах — по фактам, а не на нервах"], bridge:"Тревога растёт там, где нет ясности. В практикуме ты по шагам посчитаешь свой месяц, запас и план — тревоге станет не за что держаться.", imagine:"Представь следующий месяц: воскресенье, 10 минут на цифры — и спокойствие на всю неделю."}}
+  ],
+  offer:{bullets:["14 коротких заданий — по одному в день, 10–15 минут","Задания и подсказки под твой денежный тип","Только действия с деньгами, без долгой теории","Каждое утро — разбор от меня и пример","Проходишь в своём темпе, ничего не сгорает"]}
+};
+
+/* id сессии браузера — постоянный: таймер цены привязан к нему на сервере */
+function sid(){var v=store("ylsid"); if(!v){v=(Date.now().toString(36)+Math.random().toString(36).slice(2,12)).replace(/[^a-z0-9]/gi,"").slice(0,24); store("ylsid",v)} return v}
+function track(e){try{window.ylTrack&&window.ylTrack(e)}catch(x){}}
+
 function renderResult(){
-  var r=T[result], c=count(answers);
+  var r=T[result], kt=KT.types[result];
   $("r-title").innerHTML="Ты — <em></em>"; $("r-title").lastChild.textContent=r.name;
   $("r-quote").textContent=r.quote;
-  $("r-text").textContent=r.text;
-  var d=$("r-dist"); d.innerHTML="";
-  NAMES_ROW.forEach(function(k){
-    var row=document.createElement("div"); row.className="dist-row"+(k===result?" me":"");
-    row.innerHTML="<span></span><span class='track'><i></i></span><span></span>";
-    row.children[0].textContent=T[k].name; row.children[2].textContent=c[k];
-    d.appendChild(row);
-    setTimeout(function(){row.querySelector("i").style.width=(c[k]/6*100)+"%"},50);
+  setTimeout(function(){$("r-scale").style.width="34%"},300);
+  var box=$("r-cards"); box.innerHTML="";
+  [["🧭",kt.card1],["⚡",kt.card2],["🔒",kt.card3]].forEach(function(x,i){
+    var el=document.createElement("div"); el.className="kcard card"+(i===2?" locked":"");
+    el.innerHTML="<span class='kn'></span><div class='kbody'><h4></h4><p></p>"+(i===2&&x[1].step?"<p class='kstep'></p>":"")+"</div>";
+    el.querySelector(".kn").textContent=x[0]+"  КАРТА "+(i+1)+" ИЗ 3";
+    el.querySelector("h4").textContent=x[1].title; el.querySelector("p").textContent=x[1].text;
+    if(i===2&&x[1].step) el.querySelector(".kstep").textContent=x[1].step;
+    if(i===2){
+      var b=document.createElement("button"); b.className="btn btn--main kopen"; b.type="button"; b.textContent="Открыть третью карту";
+      b.onclick=function(){el.classList.remove("locked"); el.querySelector(".kn").textContent="🔓  КАРТА 3 ИЗ 3"; b.remove(); track("card3"); openChat()};
+      el.appendChild(b);
+    }
+    box.appendChild(el);
   });
-  var bl=$("r-blocks"); bl.innerHTML="";
-  r.b.forEach(function(x,i){
-    var el=document.createElement("div"); el.className="blk card"+(i===3?" blk--risk":"");
-    el.innerHTML="<h4></h4><p></p>"; el.firstChild.textContent=x[0]; el.lastChild.textContent=x[1];
-    bl.appendChild(el);
-  });
+  $("r-chat").hidden=true;
   show("s-res");
 }
 
-function renderNew(){
-  var r=T[result];
-  $("nv-tag").textContent="ТИП «"+r.name.toUpperCase()+"»";
-  var p=$("nv-pairs"); p.innerHTML="";
-  r.pairs.forEach(function(x){
-    var el=document.createElement("div"); el.className="pair card";
-    el.innerHTML="<div class='now'></div><span class='arr' aria-hidden='true'>↓</span><div class='new'></div>";
-    el.children[0].textContent=x[0]; el.children[2].textContent=x[1];
-    p.appendChild(el);
+function openChat(){
+  $("r-chat-intro").textContent=KT.chat.intro;
+  var w=$("r-wishes"); w.innerHTML="";
+  KT.wishes.forEach(function(x){
+    var b=document.createElement("button"); b.type="button"; b.className="wish"; b.textContent=x.label;
+    b.onclick=function(){track("wish"); renderNew(x)};
+    w.appendChild(b);
   });
-  $("o-lead").textContent="Тест показал, где утекают деньги. Практикум — про то, как это поменять: по одному небольшому действию в день, под тип «"+r.name+"».";
-  var tg=CONFIG.TG_BOT_URL;
-  ensureDeadline();
-  $("o-tg").href = isSet(tg) ? tg+(tg.indexOf("?")>-1?"&":"?")+"start=kod_"+result+startTs() : "#";
-  setupPrice();
-  var tgOn=isSet(tg), viaBot=CONFIG.PAY_VIA_BOT&&tgOn, payOn=viaBot||isSet(CONFIG.PAY_URL);
-  if(viaBot) $("o-pay").href=$("o-tg").href; // оплата — в боте: доступ сразу привязан к Telegram
-  if(!payOn){ ["o-timer","o-pay"].forEach(function(id){ $(id).style.display="none"; }); document.querySelector("#offer .price").style.display="none"; }
-  document.querySelector("#offer .or").style.display=(payOn&&tgOn)?"":"none";
-  $("o-tg").style.display=(tgOn&&!viaBot)?"":"none"; $("o-tg-note").style.display=tgOn?"":"none";
-  if(viaBot){ document.querySelector("#offer .or").style.display="none"; $("o-tg-note").textContent="Кнопка откроет мой Telegram-бот: там результат, оплата и доступ к практикуму сразу после оплаты 🤍"; }
-  $("o-soon").hidden=payOn||tgOn; $("o-ig").href=CONFIG.INSTAGRAM_URL;
+  $("r-chat").hidden=false;
+  setTimeout(function(){$("r-chat").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})},100);
+}
+
+function renderNew(wish){
+  var r=T[result], L=wish.landing;
+  $("nv-tag").textContent="ТВОЙ КОД · «"+r.name.toUpperCase()+"»";
+  $("nv-wish").textContent=wish.label;
+  $("nv-hook").textContent=L.hook;
+  var ul=$("nv-always"); ul.innerHTML=""; (L.always||[]).forEach(function(t){var li=document.createElement("li"); li.textContent=t; ul.appendChild(li)});
+  $("nv-bridge").textContent=L.bridge; $("nv-imagine").textContent=L.imagine;
+  var ob=$("o-bullets"); ob.innerHTML=""; KT.offer.bullets.forEach(function(t){var li=document.createElement("li"); li.textContent=t; ob.appendChild(li)});
+  var id=sid(), q="&q=kod&w="+encodeURIComponent(wish.id)+"&k="+result;
+  $("o-pay").href="/bot/pay_site.php?s="+id+q;
+  var tg=CONFIG.TG_BOT_URL; $("o-tg").href=isSet(tg)?tg+(tg.indexOf("?")>-1?"&":"?")+"start=kod_"+result:"#";
   show("s-nv");
+  sitePrice(id,q);
+}
+
+/* цена и таймер: срок хранит сервер (60 минут с первого показа), здесь только отсчёт */
+function rub(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" ₽"}
+function sitePrice(id,q){
+  fetch("/bot/offer.php?s="+id+q,{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
+    if(!d||!d.ok) return;
+    var shift=Date.now()-d.now*1000, dl=d.deadline*1000;
+    $("o-full").textContent=rub(d.full);
+    clearInterval(timerId);
+    var tick=function(){
+      var left=dl-(Date.now()-shift);
+      if(left<=0){
+        clearInterval(timerId); $("o-timer").hidden=true;
+        $("o-price").textContent=rub(d.full); $("o-old").textContent="";
+        $("o-pay").textContent="Начать практикум за "+rub(d.full)+" →"; return;
+      }
+      var m=Math.floor(left/6e4), s=Math.floor(left%6e4/1e3);
+      $("o-price").textContent=rub(d.low); $("o-old").textContent=rub(d.full);
+      $("o-pay").textContent="Начать практикум за "+rub(d.low)+" →";
+      $("o-left").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s; $("o-timer").hidden=false;
+    };
+    tick(); timerId=setInterval(tick,1000);
+  }).catch(function(){});
 }
 
 function ensureDeadline(){ if(CONFIG.TIMER_HOURS>0 && !store("kod_deadline")) store("kod_deadline", String(Date.now()+CONFIG.TIMER_HOURS*36e5)); }
@@ -607,11 +685,11 @@ show("s-intro");
 /* счётчик воронки (без личных данных): просмотр → начала → результат → предложение → клики; данные на наш сервер /bot/t.php */
 (function(){
   var Q="kod", sid;
-  try{sid=sessionStorage.getItem("ylsid")}catch(x){}
-  if(!sid){sid=(Date.now().toString(36)+Math.random().toString(36).slice(2,12)).replace(/[^a-z0-9]/gi,"").slice(0,24);try{sessionStorage.setItem("ylsid",sid)}catch(x){}}
+  try{sid=localStorage.getItem("ylsid")}catch(x){}
+  if(!sid){sid=(Date.now().toString(36)+Math.random().toString(36).slice(2,12)).replace(/[^a-z0-9]/gi,"").slice(0,24);try{localStorage.setItem("ylsid",sid)}catch(x){}}
   var u=(new URLSearchParams(location.search).get("utm_source")||"").replace(/[^A-Za-z0-9_.-]/g,"").slice(0,48);
   function t(e){var url="/bot/t.php?q="+Q+"&e="+e+"&s="+sid+"&u="+encodeURIComponent(u);try{if(!(navigator.sendBeacon&&navigator.sendBeacon(url)))fetch(url,{keepalive:true,mode:"no-cors"})}catch(x){}}
-  t("view");
+  window.ylTrack=t; t("view");
   var map={"s-q":"start","s-res":"result","s-nv":"offer"}, orig=window.show;
   if(typeof orig==="function") window.show=function(id){if(map[id])t(map[id]);return orig.apply(this,arguments)};
   document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a");if(!a)return;
