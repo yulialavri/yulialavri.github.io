@@ -225,6 +225,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
 .kcard .kn{font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--plum)}
 .kcard h4{font-family:var(--serif);font-size:22px;font-weight:500;margin:8px 0 6px;color:var(--tx)}
 .kcard p{margin:0;line-height:1.55}
+.kcard h4.k3{text-transform:uppercase;letter-spacing:.12em;color:var(--plum)}
 .kcard .kstep{margin-top:10px;font-style:italic;color:var(--plum)}
 .kcard.locked .kbody{filter:blur(7px);user-select:none;pointer-events:none}
 .kcard .kopen{margin-top:14px}
@@ -562,7 +563,7 @@ function renderResult(){
   var box=$("r-cards"); box.innerHTML="";
   [["🧭",kt.card1],["⚡",kt.card2],["🔒",kt.card3]].forEach(function(x,i){
     var el=document.createElement("div"); el.className="kcard card"+(i===2?" locked":"");
-    el.innerHTML="<span class='kn'></span><div class='kbody'><h4></h4><p></p>"+(i===2&&x[1].step?"<p class='kstep'></p>":"")+"</div>";
+    el.innerHTML="<span class='kn'></span><h4"+(i===2?" class='k3'":"")+"></h4><div class='kbody'><p></p>"+(i===2&&x[1].step?"<p class='kstep'></p>":"")+"</div>";
     el.querySelector(".kn").textContent=x[0]+"  КАРТА "+(i+1)+" ИЗ 3";
     el.querySelector("h4").textContent=x[1].title; el.querySelector("p").textContent=x[1].text;
     if(i===2&&x[1].step) el.querySelector(".kstep").textContent=x[1].step;
