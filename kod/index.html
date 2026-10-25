@@ -603,5 +603,20 @@ $("l-offer").href=CONFIG.OFFER_URL; $("l-privacy").href=CONFIG.PRIVACY_URL;
 
 show("s-intro");
 </script>
+<script>
+/* счётчик воронки (без личных данных): просмотр → начала → результат → предложение → клики; данные на наш сервер /bot/t.php */
+(function(){
+  var Q="kod", sid;
+  try{sid=sessionStorage.getItem("ylsid")}catch(x){}
+  if(!sid){sid=(Date.now().toString(36)+Math.random().toString(36).slice(2,12)).replace(/[^a-z0-9]/gi,"").slice(0,24);try{sessionStorage.setItem("ylsid",sid)}catch(x){}}
+  var u=(new URLSearchParams(location.search).get("utm_source")||"").replace(/[^A-Za-z0-9_.-]/g,"").slice(0,48);
+  function t(e){var url="/bot/t.php?q="+Q+"&e="+e+"&s="+sid+"&u="+encodeURIComponent(u);try{if(!(navigator.sendBeacon&&navigator.sendBeacon(url)))fetch(url,{keepalive:true,mode:"no-cors"})}catch(x){}}
+  t("view");
+  var map={"s-q":"start","s-res":"result","s-nv":"offer"}, orig=window.show;
+  if(typeof orig==="function") window.show=function(id){if(map[id])t(map[id]);return orig.apply(this,arguments)};
+  document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a");if(!a)return;
+    if(a.id==="o-pay")t("pay_click");else if(a.id==="o-tg")t("tg_click");else if(a.id==="o-ig")t("ig_click")},true);
+})();
+</script>
 </body>
 </html>
