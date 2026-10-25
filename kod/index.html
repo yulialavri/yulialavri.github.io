@@ -320,7 +320,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
     </div>
   </section>
 
-  <!-- 6. Страница под желание: история, практикум, цена с таймером 60 минут, оплата на сайте -->
+  <!-- 6. Страница под желание: история, практикум, цена с таймером 30 минут, оплата на сайте -->
   <section class="screen" id="s-nv">
     <div class="nv">
       <span class="tag" style="align-self:flex-start" id="nv-tag"></span>
@@ -337,7 +337,7 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
         <ul id="o-bullets"></ul>
         <p class="small" id="o-note" hidden></p>
         <div class="price"><span class="pnow">СЕЙЧАС</span><span class="new" id="o-price">990 ₽</span><span class="old" id="o-old">1 990 ₽</span></div>
-        <div class="timer" id="o-timer" hidden>осталось <b id="o-left">60:00</b> · потом <span id="o-full">1 990 ₽</span></div>
+        <div class="timer" id="o-timer" hidden>осталось <b id="o-left">30:00</b> · потом <span id="o-full">1 990 ₽</span></div>
         <a class="btn btn--main" id="o-pay" href="#">Начать практикум за 990 ₽ →</a>
         <p class="small" style="text-align:center">Один платёж · без подписки · доступ к практикуму в Telegram сразу после оплаты</p>
         <p class="small" style="text-align:center" id="o-disc" hidden></p>
@@ -585,7 +585,7 @@ function renderNew(wish){
   sitePrice(id,q);
 }
 
-/* цена и таймер: срок хранит сервер (60 минут с первого показа), здесь только отсчёт */
+/* цена и таймер: срок хранит сервер (30 минут с первого показа), здесь только отсчёт */
 function rub(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" ₽"}
 function sitePrice(id,q){
   fetch("/bot/offer.php?s="+id+q,{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
