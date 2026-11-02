@@ -595,6 +595,10 @@ function sitePrice(id,q){
     var shift=Date.now()-d.now*1000, dl=d.deadline*1000;
     $("o-full").textContent=rub(d.full);
     clearInterval(timerId);
+    if(!d.deadline){ /* «Оплатить» ещё не нажимала: 990 ₽, полная зачёркнута, без отсчёта (п. 52.2) */
+      $("o-price").textContent=rub(d.low); $("o-old").textContent=rub(d.full);
+      $("o-pay").textContent="Начать практикум за "+rub(d.low)+" →"; $("o-timer").hidden=true; return;
+    }
     var tick=function(){
       var left=dl-(Date.now()-shift);
       if(left<=0){
