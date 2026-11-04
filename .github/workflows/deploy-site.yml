@@ -7,14 +7,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Сайт на KZ (176.12.74.169, /home/yulia/www/site) с 04.11.2026; Beget больше не используется.
     steps:
       - uses: actions/checkout@v4
       - env:
-          KEY: ${{ secrets.DEPLOY_KEY_B64 }}
-          HOST: ${{ secrets.DEPLOY_HOST }}
-          USER: ${{ secrets.DEPLOY_USER }}
+          KEY: ${{ secrets.KZ_KEY_B64 }}
+          HOST: ${{ secrets.KZ_HOST }}
+          USER: ${{ secrets.KZ_USER }}
         run: |
           mkdir -p ~/.ssh && echo "$KEY" | base64 -d > ~/.ssh/id && chmod 600 ~/.ssh/id
-          rsync -az -e "ssh -i $HOME/.ssh/id -o StrictHostKeyChecking=accept-new" --exclude .git --exclude .github --exclude CNAME --exclude .nojekyll --exclude bot ./ $USER@$HOST:www/yulialavri.ru/
+          rsync -az -e "ssh -i $HOME/.ssh/id -o StrictHostKeyChecking=accept-new" --exclude .git --exclude .github --exclude CNAME --exclude .nojekyll --exclude bot ./ $USER@$HOST:www/site/
           curl -s -o /dev/null -w "kod %{http_code}\n" https://yulialavri.ru/kod/
           curl -s https://yulialavri.ru/kod/ | grep -o 'TG_BOT_URL: "[^"]*"'
