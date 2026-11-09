@@ -682,5 +682,71 @@ show("s-intro");
     if(a.id==="o-pay")t("pay_click");else if(a.id==="o-tg")t("tg_click");else if(a.id==="o-ig")t("ig_click")},true);
 })();
 </script>
+<!-- окно оплаты без перехода (09.11): форма Prodamus открывается поверх страницы, после оплаты — кнопка в Telegram -->
+<style>
+#pf{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:stretch;justify-content:center;background:rgba(47,38,41,.45)}
+#pf[hidden]{display:none}
+#pf .pf-box{position:relative;display:flex;flex-direction:column;width:100%;max-width:520px;height:100%;height:100dvh;background:#fff;box-shadow:0 0 60px rgba(0,0,0,.25)}
+#pf .pf-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:6px 8px 6px 18px;background:var(--bg);border-bottom:1px solid var(--line);font-size:14px;color:var(--mut)}
+#pf .pf-x{width:44px;height:44px;border:0;border-radius:50%;background:transparent;font-size:22px;color:var(--tx);cursor:pointer}
+#pf iframe{flex:1;width:100%;border:0;display:block;background:#fff}
+#pf iframe[hidden]{display:none}
+#pf iframe.pf-wait{opacity:0}
+#pf .pf-load[hidden]{display:none}
+#pf .pf-load{position:absolute;left:0;right:0;top:45%;text-align:center;color:var(--mut);font-size:16px}
+#pf .pf-ok{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 24px;text-align:center;background:var(--bg)}
+#pf .pf-ok[hidden]{display:none}
+#pf .pf-ok h3{font:600 30px/1.2 var(--serif);color:var(--plum);margin-bottom:12px}
+#pf .pf-ok p{color:var(--mut);margin-bottom:24px}
+html.pf-lock,html.pf-lock body{overflow:hidden}
+</style>
+<div id="pf" hidden role="dialog" aria-modal="true" aria-label="Оплата">
+  <div class="pf-box">
+    <div class="pf-bar"><span>🔒 Безопасная оплата · Prodamus</span><button type="button" class="pf-x" id="pf-x" aria-label="Закрыть">✕</button></div>
+    <div class="pf-load" id="pf-load">Открываю оплату…</div>
+    <iframe id="pf-f" title="Оплата" allow="payment"></iframe>
+    <div class="pf-ok" id="pf-ok" hidden>
+      <h3>Оплата прошла 🤍</h3>
+      <p>Остался один шаг: нажми кнопку — практикум откроется в Telegram, первое задание уже ждёт тебя.</p>
+      <a class="btn btn--main" id="pf-tg" href="#">Открыть практикум в Telegram →</a>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var pf=document.getElementById("pf"), fr=document.getElementById("pf-f"), ok=document.getElementById("pf-ok"), pay=document.getElementById("o-pay");
+  var BASE="https://bot.yulialavri.ru/bot/pay_site.php", poll=null, until=0, paid=false, href="";
+  if(!pf||!pay) return;
+  function prm(u,k){try{return new URL(u).searchParams.get(k)||""}catch(e){return ""}}
+  function lock(on){document.documentElement.classList.toggle("pf-lock",on)}
+  function done(){
+    if(paid) return; paid=true; clearInterval(poll);
+    var s=prm(href,"s"), tg=(window.CONFIG&&CONFIG.TG_BOT_URL)||"https://t.me/yulia_lavri_bot";
+    document.getElementById("pf-tg").href=tg+(tg.indexOf("?")>-1?"&":"?")+"start=paid_"+s;
+    fr.hidden=true; fr.src="about:blank"; ok.hidden=false; document.getElementById("pf-load").hidden=true; pf.hidden=false; lock(true);
+  }
+  function check(){
+    if(Date.now()>until){clearInterval(poll);return}
+    fetch(href.replace("/pay_site.php","/offer.php"),{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){if(d&&d.paid)done()}).catch(function(){});
+  }
+  function open(e){
+    href=pay.href||"";
+    if(href.indexOf(BASE)!==0) return; /* запасные ссылки из настроек — как раньше */
+    e.preventDefault();
+    if(paid){pf.hidden=false;lock(true);return}
+    ok.hidden=true; document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank")fr.className=""}; fr.src=href+"&f=1";
+    pf.hidden=false; lock(true);
+    clearInterval(poll); until=Date.now()+30*6e4; poll=setInterval(check,4000);
+    /* таймер 30 минут стартует с нажатия — обновим цену на странице */
+    setTimeout(function(){ if(typeof sitePrice==="function"){var s=prm(href,"s"); sitePrice(s,"&q="+encodeURIComponent(prm(href,"q"))+"&w="+encodeURIComponent(prm(href,"w"))+"&k="+encodeURIComponent(prm(href,"k")))} },2500);
+  }
+  function close(){ pf.hidden=true; lock(false); if(!paid) fr.src="about:blank"; }
+  pay.addEventListener("click",open);
+  document.getElementById("pf-x").addEventListener("click",close);
+  pf.addEventListener("click",function(e){if(e.target===pf)close()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!pf.hidden)close()});
+  window.addEventListener("message",function(e){if(e.origin==="https://bot.yulialavri.ru"&&e.data&&e.data.yl==="paid")done()});
+})();
+</script>
 </body>
 </html>
