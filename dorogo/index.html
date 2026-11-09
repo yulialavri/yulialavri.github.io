@@ -659,6 +659,8 @@ show("s-intro");
 #pf iframe[hidden]{display:none}
 #pf iframe.pf-wait{opacity:0}
 #pf .pf-load[hidden]{display:none}
+#pf .pf-int{display:block;width:100%;padding:11px 18px;border:0;border-bottom:1px solid var(--line);background:#fff;color:var(--plum);font:600 15px var(--sans);text-align:left;cursor:pointer}
+#pf .pf-int[hidden]{display:none}
 #pf .pf-load{position:absolute;left:0;right:0;top:45%;text-align:center;color:var(--mut);font-size:16px}
 #pf .pf-ok{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 24px;text-align:center;background:var(--bg)}
 #pf .pf-ok[hidden]{display:none}
@@ -669,6 +671,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
 <div id="pf" hidden role="dialog" aria-modal="true" aria-label="Оплата">
   <div class="pf-box">
     <div class="pf-bar"><span>🔒 Безопасная оплата · Prodamus</span><button type="button" class="pf-x" id="pf-x" aria-label="Закрыть">✕</button></div>
+    <button type="button" class="pf-int" id="pf-int">🌍 Карта не из России? Оплатить в долларах →</button>
     <div class="pf-load" id="pf-load">Открываю оплату…</div>
     <iframe id="pf-f" title="Оплата" allow="payment"></iframe>
     <div class="pf-ok" id="pf-ok" hidden>
@@ -689,7 +692,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
     if(paid) return; paid=true; clearInterval(poll);
     var s=prm(href,"s"), tg=(window.CONFIG&&CONFIG.TG_BOT_URL)||"https://t.me/yulia_lavri_bot";
     document.getElementById("pf-tg").href=tg+(tg.indexOf("?")>-1?"&":"?")+"start=paid_"+s;
-    fr.hidden=true; fr.src="about:blank"; ok.hidden=false; document.getElementById("pf-load").hidden=true; pf.hidden=false; lock(true);
+    fr.hidden=true; fr.src="about:blank"; ok.hidden=false; document.getElementById("pf-load").hidden=true; document.getElementById("pf-int").hidden=true; pf.hidden=false; lock(true);
   }
   function check(){
     if(Date.now()>until){clearInterval(poll);return}
@@ -700,12 +703,16 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
     if(href.indexOf(BASE)!==0) return; /* запасные ссылки из настроек — как раньше */
     e.preventDefault();
     if(paid){pf.hidden=false;lock(true);return}
-    ok.hidden=true; document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank")fr.className=""}; fr.src=href+"&f=1";
+    ok.hidden=true; document.getElementById("pf-int").hidden=false; load(href+"&f=1");
     pf.hidden=false; lock(true);
     clearInterval(poll); until=Date.now()+30*6e4; poll=setInterval(check,4000);
     /* таймер 30 минут стартует с нажатия — обновим цену на странице */
     setTimeout(function(){ if(typeof sitePrice==="function"){var s=prm(href,"s"); sitePrice(s,"&q="+encodeURIComponent(prm(href,"q"))+"&w="+encodeURIComponent(prm(href,"w"))+"&k="+encodeURIComponent(prm(href,"k")))} },2500);
   }
+  function load(u){ document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank")fr.className=""}; fr.src=u; }
+  document.getElementById("pf-int").addEventListener("click",function(){ /* lava.top: карта не из России, цена по курсу ЦБ (п. 79) */
+    this.hidden=true; load(href.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")+"&f=1");
+  });
   function close(){ pf.hidden=true; lock(false); if(!paid) fr.src="about:blank"; }
   pay.addEventListener("click",open);
   document.getElementById("pf-x").addEventListener("click",close);
