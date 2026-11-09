@@ -670,7 +670,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
 </style>
 <div id="pf" hidden role="dialog" aria-modal="true" aria-label="Оплата">
   <div class="pf-box">
-    <div class="pf-bar"><span>🔒 Безопасная оплата · Prodamus</span><button type="button" class="pf-x" id="pf-x" aria-label="Закрыть">✕</button></div>
+    <div class="pf-bar"><span>🔒 Безопасная оплата</span><button type="button" class="pf-x" id="pf-x" aria-label="Закрыть">✕</button></div>
     <button type="button" class="pf-int" id="pf-int">🌍 Карта не из России? Оплатить в долларах →</button>
     <div class="pf-load" id="pf-load">Открываю оплату…</div>
     <iframe id="pf-f" title="Оплата" allow="payment"></iframe>
@@ -709,7 +709,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
     /* таймер 30 минут стартует с нажатия — обновим цену на странице */
     setTimeout(function(){ if(typeof sitePrice==="function"){var s=prm(href,"s"); sitePrice(s,"&q="+encodeURIComponent(prm(href,"q"))+"&w="+encodeURIComponent(prm(href,"w"))+"&k="+encodeURIComponent(prm(href,"k")))} },2500);
   }
-  function load(u){ document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank")fr.className=""}; fr.src=u; }
+  function load(u){ document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank"){fr.className="";document.getElementById("pf-load").hidden=true}}; fr.src=u; }
   document.getElementById("pf-int").addEventListener("click",function(){ /* lava.top: карта не из России, цена по курсу ЦБ (п. 79) */
     this.hidden=true; load(href.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")+"&f=1");
   });
