@@ -532,6 +532,8 @@ var KT = {"types": {"u": {"name": "Удобная", "card1": {"title": "Снач
 var _sid; /* в браузере Telegram память сайта бывает закрыта — тогда id живёт хотя бы до конца страницы, один на тест и оплату */
 function sid(){if(_sid)return _sid; var v=store("ylsid"); if(!v){v=(Date.now().toString(36)+Math.random().toString(36).slice(2,12)).replace(/[^a-z0-9]/gi,"").slice(0,24); store("ylsid",v)} return _sid=v}
 function src(){return (new URLSearchParams(location.search).get("utm_source")||"").replace(/[^A-Za-z0-9_.-]/g,"").slice(0,48)}
+/* номер клиентки в ChatPlace (?cp={{ clientId }} в кнопке директа) — для напоминаний об оплате в директ (автор 09.11) */
+function cp(){var v=(new URLSearchParams(location.search).get("cp")||"").toLowerCase();if(/^[0-9a-f-]{36}$/.test(v)){store("yl_cp",v);return v}v=store("yl_cp")||"";return /^[0-9a-f-]{36}$/.test(v)?v:""}
 function track(e){try{window.ylTrack&&window.ylTrack(e)}catch(x){}}
 
 function renderResult(){
@@ -581,7 +583,7 @@ function renderNew(wish){
   if(KT.offer.note){$("o-note").textContent=KT.offer.note; $("o-note").hidden=false}
   if(KT.offer.disclaimer){$("o-disc").textContent=KT.offer.disclaimer; $("o-disc").hidden=false}
   var id=sid(), q="&q=kod&w="+encodeURIComponent(wish.id)+"&k="+result;
-  $("o-pay").href="https://bot.yulialavri.ru/bot/pay_site.php?s="+id+q+"&u="+encodeURIComponent(src());
+  $("o-pay").href="https://bot.yulialavri.ru/bot/pay_site.php?s="+id+q+"&u="+encodeURIComponent(src())+(cp()?"&cp="+cp():"");
   var tg=CONFIG.TG_BOT_URL; $("o-tg").href=isSet(tg)?tg+(tg.indexOf("?")>-1?"&":"?")+"start=kod_"+result:"#";
   show("s-nv");
   sitePrice(id,q);
