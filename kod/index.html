@@ -531,7 +531,7 @@ var KT = {"types": {"u": {"name": "Удобная", "card1": {"title": "Снач
 /* id сессии браузера — постоянный: таймер цены привязан к нему на сервере */
 var _sid; /* в браузере Telegram память сайта бывает закрыта — тогда id живёт хотя бы до конца страницы, один на тест и оплату */
 function sid(){if(_sid)return _sid; var v=store("ylsid"); if(!v){v=(Date.now().toString(36)+Math.random().toString(36).slice(2,12)).replace(/[^a-z0-9]/gi,"").slice(0,24); store("ylsid",v)} return _sid=v}
-function src(){return (new URLSearchParams(location.search).get("utm_source")||"").replace(/[^A-Za-z0-9_.-]/g,"").slice(0,48)}
+function src(){var p=new URLSearchParams(location.search);if(p.get("yltest")==="1")store("yltest","1");if(p.get("yltest")==="0")store("yltest","0");if(store("yltest")==="1")return "selftest";/* проверки автора и техчата — не в статистику (10.11) */return (p.get("utm_source")||"").replace(/[^A-Za-z0-9_.-]/g,"").slice(0,48)}
 /* номер клиентки в ChatPlace (?cp={{ clientId }} в кнопке директа) — для напоминаний об оплате в директ (автор 09.11) */
 function cp(){var v=(new URLSearchParams(location.search).get("cp")||"").toLowerCase();if(/^[0-9a-f-]{36}$/.test(v)){store("yl_cp",v);return v}v=store("yl_cp")||"";return /^[0-9a-f-]{36}$/.test(v)?v:""}
 function track(e){try{window.ylTrack&&window.ylTrack(e)}catch(x){}}
