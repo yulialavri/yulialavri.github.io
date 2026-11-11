@@ -240,6 +240,12 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
 .always{padding:18px 20px}
 .always h4{margin:0 0 8px;font-size:13px;letter-spacing:.14em;color:var(--plum)}
 .always ul{margin:0;padding-left:18px;line-height:1.6}
+.oset{margin:22px 0 4px;padding:18px 18px 16px;border-radius:20px;background:rgba(255,255,255,.72);border:1.5px solid var(--rose);display:flex;flex-direction:column;gap:10px}
+.oset[hidden],.pone[hidden]{display:none}
+.oset .st{font:600 26px/1.15 var(--serif);color:var(--plum)}
+.oset .sl{margin:0;padding-left:20px;color:var(--tx);font-size:16px}
+.oset .sl li{margin:2px 0}
+.pone{display:block;font-size:15px;font-weight:700;color:var(--tx);margin:4px 0 -4px}
 .pnow{display:block;font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--plum);width:100%}
 .tglink{display:block;text-align:center;margin-top:10px;color:var(--mut)}
 </style>
@@ -336,9 +342,18 @@ footer a{color:var(--mut);display:inline-block;padding:8px 2px}
         <h3 id="o-title">Денежный код: <em>практикум 14 дней</em></h3>
         <ul id="o-bullets"></ul>
         <p class="small" id="o-note" hidden></p>
+        <span class="pone" id="o-one" hidden>1 практикум</span>
         <div class="price"><span class="pnow">СЕЙЧАС</span><span class="new" id="o-price">990 ₽</span><span class="old" id="o-old">1 990 ₽</span></div>
         <div class="timer" id="o-timer" hidden>осталось <b id="o-left">30:00</b> · потом <span id="o-full">1 990 ₽</span></div>
         <a class="btn btn--main" id="o-pay" href="#">Начать практикум за 990 ₽ →</a>
+        <div class="oset" id="o-set" hidden>
+          <span class="tag" style="align-self:flex-start">ВЫГОДНЕЕ</span>
+          <div class="st">3 практикума</div>
+          <div class="price"><span class="new" id="s-price">1 990 ₽</span><span class="old" id="s-old">5 970 ₽</span></div>
+          <p class="small" id="s-txt">Твой практикум + ещё два, которые продолжают тему. 42 дня маленьких шагов.</p>
+          <ul class="sl" id="s-list"></ul>
+          <a class="btn btn--ghost" id="o-pay3" href="#">Взять 3 практикума за 1 990 ₽ →</a>
+        </div>
         <p class="small" style="text-align:center">Один платёж · без подписки · доступ к практикуму в Telegram сразу после оплаты</p>
         <p class="small" style="text-align:center" id="o-disc" hidden></p>
         <p class="small" style="text-align:center"><a id="l-offer2" href="/oferta.html" target="_blank" rel="noopener">Оферта</a> · <a href="/refund.html" target="_blank" rel="noopener">Возврат</a> · <a href="/privacy.html" target="_blank" rel="noopener">Персональные данные</a></p>
@@ -584,6 +599,7 @@ function renderNew(wish){
   if(KT.offer.disclaimer){$("o-disc").textContent=KT.offer.disclaimer; $("o-disc").hidden=false}
   var id=sid(), q="&q=kod&w="+encodeURIComponent(wish.id)+"&k="+result;
   $("o-pay").href="https://bot.yulialavri.ru/bot/pay_site.php?s="+id+q+"&u="+encodeURIComponent(src())+(cp()?"&cp="+cp():"");
+  $("o-pay3").href=$("o-pay").href+"&t=3";
   var tg=CONFIG.TG_BOT_URL; $("o-tg").href=isSet(tg)?tg+(tg.indexOf("?")>-1?"&":"?")+"start=kod_"+result:"#";
   show("s-nv");
   sitePrice(id,q);
@@ -597,20 +613,27 @@ function sitePrice(id,q){
     var shift=Date.now()-d.now*1000, dl=d.deadline*1000;
     $("o-full").textContent=rub(d.full);
     clearInterval(timerId);
+    var S=d.set; /* тариф «3 практикума» (п. 85): общий таймер, 1 990 → 3 990 ₽ */
+    $("o-set").hidden=!S; $("o-one").hidden=!S;
+    var setP=function(low){ if(!S) return; var p=low?S.low:S.full;
+      $("s-price").textContent=rub(p); $("s-old").textContent=rub(S.strike);
+      $("s-txt").textContent="Твой практикум + ещё два, которые продолжают тему. 42 дня маленьких шагов. По отдельности — "+rub(S.strike)+", вместе — "+rub(p)+".";
+      $("o-pay3").textContent="Взять 3 практикума за "+rub(p)+" →";
+      var ul=$("s-list"); if(!ul.childNodes.length) S.names.forEach(function(n){var li=document.createElement("li"); li.textContent=n; ul.appendChild(li)}); };
     if(!d.deadline){ /* «Оплатить» ещё не нажимала: 990 ₽, полная зачёркнута, без отсчёта (п. 52.2) */
       $("o-price").textContent=rub(d.low); $("o-old").textContent=rub(d.full);
-      $("o-pay").textContent="Начать практикум за "+rub(d.low)+" →"; $("o-timer").hidden=true; return;
+      $("o-pay").textContent="Начать практикум за "+rub(d.low)+" →"; $("o-timer").hidden=true; setP(true); return;
     }
     var tick=function(){
       var left=dl-(Date.now()-shift);
       if(left<=0){
         clearInterval(timerId); $("o-timer").hidden=true;
         $("o-price").textContent=rub(d.full); $("o-old").textContent="";
-        $("o-pay").textContent="Начать практикум за "+rub(d.full)+" →"; return;
+        $("o-pay").textContent="Начать практикум за "+rub(d.full)+" →"; setP(false); return;
       }
       var m=Math.floor(left/6e4), s=Math.floor(left%6e4/1e3);
       $("o-price").textContent=rub(d.low); $("o-old").textContent=rub(d.full);
-      $("o-pay").textContent="Начать практикум за "+rub(d.low)+" →";
+      $("o-pay").textContent="Начать практикум за "+rub(d.low)+" →"; setP(true);
       $("o-left").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s; $("o-timer").hidden=false;
     };
     tick(); timerId=setInterval(tick,1000);
@@ -679,7 +702,7 @@ show("s-intro");
   var map={"s-q":"start","s-res":"result","s-nv":"offer"}, orig=window.show;
   if(typeof orig==="function") window.show=function(id){if(map[id])t(map[id]);return orig.apply(this,arguments)};
   document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a");if(!a)return;
-    if(a.id==="o-pay")t("pay_click");else if(a.id==="o-tg")t("tg_click");else if(a.id==="o-ig")t("ig_click")},true);
+    if(a.id==="o-pay"||a.id==="o-pay3")t("pay_click");else if(a.id==="o-tg")t("tg_click");else if(a.id==="o-ig")t("ig_click")},true);
 })();
 </script>
 <!-- окно оплаты без перехода (09.11): форма Prodamus открывается поверх страницы, после оплаты — кнопка в Telegram -->
@@ -733,10 +756,10 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
     fetch(href.replace("/pay_site.php","/offer.php"),{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){if(d&&d.paid)done()}).catch(function(){});
   }
   function open(e){
-    href=pay.href||"";
+    href=(e.currentTarget&&e.currentTarget.href)||pay.href||"";
     if(href.indexOf(BASE)!==0) return; /* запасные ссылки из настроек — как раньше */
     e.preventDefault();
-    if(paid){pf.hidden=false;lock(true);return}
+    if(paid&&prm(href,"s")===prm(pay.href,"s")){pf.hidden=false;lock(true);return}
     ok.hidden=true; document.getElementById("pf-int").hidden=false; load(href+"&f=1");
     pf.hidden=false; lock(true);
     clearInterval(poll); until=Date.now()+30*6e4; poll=setInterval(check,4000);
@@ -749,6 +772,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
   });
   function close(){ pf.hidden=true; lock(false); if(!paid) fr.src="about:blank"; }
   pay.addEventListener("click",open);
+  var pay3=document.getElementById("o-pay3"); if(pay3) pay3.addEventListener("click",open); /* набор «3 практикума» — то же окно */
   document.getElementById("pf-x").addEventListener("click",close);
   pf.addEventListener("click",function(e){if(e.target===pf)close()});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!pf.hidden)close()});
