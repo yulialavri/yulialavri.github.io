@@ -568,6 +568,7 @@ function renderNew(wish){
   $("o-pay3").href=$("o-pay").href+"&t=3";
   var tg=CONFIG.TG_BOT_URL; $("o-tg").href=isSet(tg)?tg+(tg.indexOf("?")>-1?"&":"?")+"start=dor_"+result:"#";
   show("s-nv");
+  store("yl_offer_dorogo", JSON.stringify({r:result,w:wish.id,t:Date.now()})); /* 11.11: ушла на оплату и вернулась — сразу сюда, без теста заново */
   sitePrice(id,q);
 }
 
@@ -648,7 +649,7 @@ document.addEventListener("click",function(e){
   if(act==="start"){answers=[];cur=0;renderQ();show("s-q")}
   if(act==="continue"){renderQ();show("s-q")}
   if(act==="next"){renderNew()}
-  if(act==="restart"){answers=[];cur=0;result=null;show("s-intro")}
+  if(act==="restart"){answers=[];cur=0;result=null;store("yl_offer_dorogo","");show("s-intro")}
 });
 $("q-back").onclick=function(){
   if(busy) return;
@@ -657,7 +658,11 @@ $("q-back").onclick=function(){
 };
 $("l-offer").href=CONFIG.OFFER_URL; $("l-privacy").href=CONFIG.PRIVACY_URL;
 
-show("s-intro");
+(function(){ /* вернулась (назад с оплаты, повторный заход) в течение 12 ч — показываем её результат и оплату, а не тест с начала */
+  var o=null; try{o=JSON.parse(store("yl_offer_dorogo")||"null")}catch(e){}
+  var w=o&&o.t&&Date.now()-o.t<432e5&&T[o.r]&&KT.wishes.filter(function(x){return x.id===o.w})[0];
+  if(w){result=o.r; renderNew(w); window.scrollTo(0,0)} else show("s-intro");
+})();
 </script>
 <script>
 /* счётчик воронки (без личных данных): просмотр → начала → результат → предложение → клики; данные на наш сервер /bot/t.php */
