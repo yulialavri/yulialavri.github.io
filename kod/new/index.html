@@ -256,11 +256,12 @@ em{font-style:italic;color:var(--plum)}
 
 /* предложение */
 .offer-h{text-align:center;margin-bottom:18px}
-.tl{position:relative;margin:16px 0 6px;padding-left:30px}
-.tl::before{content:"";position:absolute;left:11px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--gold),var(--plum))}
-.tl .p{position:relative;margin-bottom:12px}
-.tl .p::before{content:"";position:absolute;left:-25px;top:4px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--gold);box-shadow:0 0 0 4px rgba(201,164,92,.18)}
-.tl .p b{display:block;font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--gold-d)}
+.tl{position:relative;margin:16px 0 6px;padding-left:36px}
+.tl .p{position:relative;padding-bottom:14px}
+.tl .p:last-child{padding-bottom:2px}
+.tl .p::before{content:"";position:absolute;left:-36px;top:0;width:22px;height:22px;box-sizing:border-box;border-radius:50%;background:#fff;border:3px solid var(--gold);box-shadow:0 0 0 4px rgba(201,164,92,.18);z-index:1}
+.tl .p:not(:last-child)::after{content:"";position:absolute;left:-26px;top:22px;bottom:0;width:2px;background:linear-gradient(var(--gold),var(--plum))}
+.tl .p b{display:block;font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--gold-d);line-height:22px}
 .tl .p span{font-size:16px;font-weight:600}
 .inside{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:12px 0 4px}
 .inside .t{grid-column:span 2}.inside .t:nth-child(n+4){grid-column:span 3;flex-direction:row;gap:10px;text-align:left}.inside .t:nth-child(n+4) .ii{margin-bottom:0;flex:none}
