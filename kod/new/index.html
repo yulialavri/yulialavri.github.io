@@ -471,7 +471,7 @@ footer a{color:var(--mut)}
 
 <script>
 var PREVIEW = true; /* пока страница — черновик для автора: визиты и клики не в статистику */
-var CONFIG = {TG_BOT_URL:"https://t.me/yulia_lavri_bot"};
+var CONFIG = {TG_BOT_URL: "https://t.me/yulia_lavri_bot"}; /* формат строки нужен проверке после выкладки (deploy-site) */
 var Q = [
   {t:"Тебе неожиданно пришли 20 000 ₽. Первая мысль?", a:[["Кому что нужно?","u"],["Наверное, ошибка","s"],["Срочно спрятать","t"],["Вот бы так всегда","z"]]},
   {t:"Нужно назвать цену за свою работу или попросить прибавку. Ты…", a:[["Сделаю бесплатно","u"],["Назову поменьше","s"],["Отложу разговор","t"],["Жду, сами предложат","z"]]},
@@ -918,6 +918,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
   window.addEventListener("message",function(e){if(e.origin==="https://bot.yulialavri.ru"&&e.data&&e.data.yl==="paid")done()});
 })();
 </script>
+
 
 
 
