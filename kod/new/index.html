@@ -176,31 +176,30 @@ em{font-style:italic;color:var(--plum)}
 .deck-h{display:flex;justify-content:space-between;align-items:center;margin:26px 2px 12px}
 .deck-h b{font-size:13px;font-weight:800;letter-spacing:.14em;color:var(--gold-d)}
 .dots{display:flex;gap:6px}.dots i{width:8px;height:8px;border-radius:50%;background:rgba(110,47,81,.18);transition:all .3s}.dots i.on{width:22px;border-radius:6px;background:var(--plum)}
-.deck{position:relative;height:340px;perspective:1200px;transition:height .4s ease}
-.kc.next1 .front>*,.kc.next2 .front>*{opacity:0;transition:opacity .2s}
-.kc.cur .front>*{opacity:1;transition:opacity .4s .2s}
-.kc{position:absolute;inset:0;border-radius:26px;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.3,.7,.2,1),opacity .4s ease}
-.kc .face{position:absolute;inset:0;border-radius:26px;padding:24px 22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;overflow:hidden}
+.deck{position:relative;height:340px;transition:height .4s ease}
+/* карты без 3D-изнанки (на iPhone изнанка показывалась зеркально): поворот до ребра → смена → разворот */
+.kc{position:absolute;inset:0;border-radius:26px;transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+.kc .face{position:absolute;inset:0;border-radius:26px;padding:24px 22px;display:flex;flex-direction:column;overflow:hidden}
 .kc .front{background:linear-gradient(160deg,#fff 0%,#FBF4EE 100%);box-shadow:var(--sh2);border:1px solid rgba(255,255,255,.9)}
 .kc .front::before{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(243,226,182,.65),transparent 70%)}
 .kc .ico{font-size:34px;margin-bottom:10px;position:relative}
 .kc .kn{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--gold-d);margin-bottom:8px;position:relative}
 .kc h3{margin-bottom:10px;position:relative;font-size:27px}
 .kc p{font-size:16px;line-height:1.5;color:var(--tx);position:relative}
-.kc .step{margin-top:auto;padding:12px 14px;border-radius:14px;background:linear-gradient(120deg,#FBF1DE,#F6E6C4);font-weight:700;color:var(--plum-deep);font-size:15px;position:relative}
-.kc .back-face{transform:rotateY(180deg);background:radial-gradient(circle at 30% 20%,#86426C,var(--plum-deep) 75%);box-shadow:var(--sh2);align-items:center;justify-content:center;text-align:center;color:#fff}
-.kc .back-face .lock{font-size:46px;margin-bottom:14px;animation:bob 3s ease-in-out infinite}
-.kc .back-face h3{color:var(--gold-l);margin-bottom:8px}
-.kc .back-face p{color:rgba(255,255,255,.82);margin-bottom:20px;font-size:15.5px}
+.kc .lockf{background:radial-gradient(circle at 30% 20%,#86426C,var(--plum-deep) 75%);box-shadow:var(--sh2);align-items:center;justify-content:center;text-align:center;color:#fff}
+.kc .lockf .lock{font-size:46px;margin-bottom:14px;animation:bob 3s ease-in-out infinite}
+.kc .lockf h3{color:var(--gold-l);margin-bottom:8px}
+.kc .lockf p{color:rgba(255,255,255,.82);margin-bottom:20px;font-size:15.5px}
 .kc.cur{z-index:3;transform:none}
-.kc.next1{z-index:2;transform:translateY(14px) scale(.95);opacity:.92}
-.kc.next2{z-index:1;transform:translateY(26px) scale(.9);opacity:.75}
-.kc.gone{z-index:4;transform:translateX(-18%) rotateY(-180deg);opacity:0;pointer-events:none;transition:transform .8s cubic-bezier(.3,.7,.2,1),opacity .3s ease .55s}
-.kc.locked.cur{transform:rotateY(180deg)}
-.kc.locked.next1{transform:translateY(14px) scale(.95) rotateY(180deg)}
-.kc.locked.next2{transform:translateY(26px) scale(.9) rotateY(180deg)}
-.kc .back-plain{transform:rotateY(180deg);background:radial-gradient(circle at 30% 20%,#86426C,var(--plum-deep) 75%);box-shadow:var(--sh2);align-items:center;justify-content:center}
-.kc .back-plain svg{width:120px;height:120px;overflow:visible;opacity:.9}
+.kc.next1{z-index:2;transform:translateY(14px) scale(.95)}
+.kc.next2{z-index:1;transform:translateY(26px) scale(.9)}
+.kc.next1 .face>*,.kc.next2 .face>*{visibility:hidden}
+.kc.next1 .face{filter:brightness(.97)}.kc.next2 .face{filter:brightness(.93)}
+.kc.done{display:none}
+.kc.out{animation:cardOut .3s cubic-bezier(.5,0,.8,.4) forwards;z-index:4}
+.kc.in{animation:cardIn .42s cubic-bezier(.2,.7,.3,1) both}
+@keyframes cardOut{to{transform:perspective(900px) rotateY(-90deg)}}
+@keyframes cardIn{from{transform:perspective(900px) rotateY(90deg)}to{transform:perspective(900px) rotateY(0)}}
 .deck-nav{margin-top:44px}
 
 /* потери: тёмный, тревожный экран, пункты появляются по очереди и «тяжелеют» */
@@ -634,35 +633,48 @@ function analyze(){
 
 /* ===== результат: шкала + колода ===== */
 function renderResult(){
-  var r=T[result],kt=KT.types[result],g=GAUGE[result]||{p:.3,c:""};
+  var r=T[result],g=GAUGE[result]||{p:.3,c:""};
   $("r-name").textContent=r.name;$("r-quote").textContent=r.quote;$("r-cap").innerHTML=g.c;
   $("needle").style.transform="rotate(-90deg)";$("arc").style.strokeDashoffset="393";
   setTimeout(function(){$("needle").style.transform="rotate("+(-90+g.p*180)+"deg)";$("arc").style.strokeDashoffset=String(393*(1-g.p))},700);
   var deck=$("deck");deck.innerHTML="";kIdx=0;
-  var CC=CARDS[result]||[];
-  [["🧭",{title:CC[0][0],text:CC[0][1]}],["⚡",{title:CC[1][0],text:CC[1][1]}],["🔐",{title:CC[2][0],text:CC[2][1]}]].forEach(function(x,i){
-    var c=document.createElement("div");c.className="kc";
-    c.innerHTML='<div class="face front"><div class="ico">'+x[0]+'</div><div class="kn">КАРТА '+(i+1)+' ИЗ 3</div><h3></h3><p></p>'+(x[1].step?'<div class="step"></div>':'')+'</div>'
-      +(i===2?'<div class="face back-face"><div class="lock">🔒</div><h3>Самое важное</h3><p>Здесь — что именно не даёт деньгам остаться у тебя.</p><button class="btn btn--gold" type="button">Открыть третью карту</button></div>':'<div class="face back-plain"><svg><use href="#lws"/></svg></div>');
-    c.querySelector("h3").textContent=x[1].title;c.querySelector("p").textContent=x[1].text;
-    if(x[1].step)c.querySelector(".step").textContent="Шаг на сегодня: "+x[1].step;
-    if(i===2){c.classList.add("locked");c.querySelector(".back-face button").onclick=function(e){e.stopPropagation();c.classList.remove("locked");vibr();track("card3");layoutDeck()}}
+  var CC=CARDS[result]||[],ICN=["🧭","⚡","🔐"];
+  CC.forEach(function(x,i){
+    var c=document.createElement("div");c.className="kc";c._front='<div class="face front"><div class="ico">'+ICN[i]+'</div><div class="kn">КАРТА '+(i+1)+' ИЗ 3</div><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>';
+    if(i===2){c._locked=true;c.innerHTML='<div class="face lockf"><div class="lock">🔒</div><h3>Самое важное</h3><p>Здесь — что именно не даёт деньгам остаться у тебя.</p><button class="btn btn--gold" type="button">Открыть третью карту</button></div>';
+      c.querySelector("button").onclick=function(e){e.stopPropagation();openThird()}}
+    else c.innerHTML=c._front;
     deck.appendChild(c);
   });
   layoutDeck();show("s-res");
 }
 function layoutDeck(){
   var cs=$("deck").children;
-  [].forEach.call(cs,function(c,i){c.style.transform="";c.classList.remove("cur","next1","next2","gone");if(i<kIdx)c.classList.add("gone");else if(i===kIdx)c.classList.add("cur");else if(i===kIdx+1)c.classList.add("next1");else c.classList.add("next2")});
+  [].forEach.call(cs,function(c,i){c.classList.remove("cur","next1","next2","done");c.classList.add(i<kIdx?"done":i===kIdx?"cur":i===kIdx+1?"next1":"next2")});
   [].forEach.call($("k-dots").children,function(d,i){d.classList.toggle("on",i===kIdx)});
-  var lk=cs[2]&&cs[2].classList.contains("locked");
+  var lk=cs[2]&&cs[2]._locked;
   $("k-next").innerHTML=kIdx<2?'Следующая карта <span class="arr">→</span>':(lk?'Открыть третью карту 🔓':'Что будет дальше <span class="arr">→</span>');
-  var h=0;[].forEach.call(cs,function(c){var f=c.querySelector(".front");f.style.height="auto";h=Math.max(h,f.scrollHeight);f.style.height=""});$("deck").style.height=(Math.max(h,300)+6)+"px";
+  var h=0;[].forEach.call(cs,function(c){var f=c.querySelector(".face");if(!f)return;var was=c.classList.contains("done");if(was)c.classList.remove("done");f.style.position="relative";h=Math.max(h,f.offsetHeight);f.style.position="";if(was)c.classList.add("done")});
+  $("deck").style.height=(Math.max(h,300)+6)+"px";
+}
+var flipping=false;
+/* карта поворачивается до ребра, потом появляется следующая (без изнанки — надёжно на iPhone) */
+function nextCard(){
+  if(flipping)return;flipping=true;var cs=$("deck").children,c=cs[kIdx];vibr();
+  if(reduce){kIdx++;layoutDeck();flipping=false;return}
+  c.classList.add("out");
+  setTimeout(function(){c.classList.remove("out");kIdx++;layoutDeck();var n=cs[kIdx];n.classList.add("in");setTimeout(function(){n.classList.remove("in");flipping=false},440)},300);
+}
+function openThird(){
+  var c=$("deck").children[2];if(!c._locked||flipping)return;flipping=true;vibr();track("card3");
+  var swap=function(){c._locked=false;c.innerHTML=c._front;layoutDeck()};
+  if(reduce){swap();flipping=false;return}
+  c.classList.add("out");
+  setTimeout(function(){c.classList.remove("out");swap();c.classList.add("in");setTimeout(function(){c.classList.remove("in");flipping=false},440)},300);
 }
 $("k-next").onclick=function(){
-  var cs=$("deck").children;vibr();
-  if(kIdx<2){kIdx++;layoutDeck();return}
-  if(cs[2].classList.contains("locked")){cs[2].classList.remove("locked");track("card3");layoutDeck();return}
+  if(kIdx<2){nextCard();return}
+  if($("deck").children[2]._locked){openThird();return}
   renderLoss();
 };
 /* наклон за пальцем убран — давал «иероглифы» при перелистывании (автор 11.11) */
