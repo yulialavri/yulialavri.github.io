@@ -441,7 +441,7 @@ footer a{color:var(--mut)}
       <p class="small" id="s-txt" hidden></p>
       <ul class="slist" id="s-list" hidden></ul>
       <div class="timer" id="o-timer"><div class="clock" id="o-left">30<span class="c">:</span>00</div><p id="o-tnote">Цена держится только для тебя. Потом — <span id="o-full">1 990 ₽</span></p></div>
-      <a class="btn btn--main pulse" id="o-pay" href="#">Начать свои 14 дней <span class="arr">→</span></a>
+      <a class="btn btn--main pulse" id="o-pay" href="#">Да, я начинаю сегодня <span class="arr">→</span></a>
       <a class="btn btn--gold" id="o-pay3" href="#" hidden>Взять 3 практикума <span class="arr">→</span></a>
       <div class="trust"><span>✓ Один платёж</span><span>✓ Без подписки</span><span>✓ Доступ сразу</span></div>
     </div>
@@ -542,11 +542,21 @@ var CARDS = {
  s:[["Мне много не надо","Ты честно считаешь каждый рубль. И заранее называешь цену поменьше, потому что «неудобно»."],["Ты умеешь обходиться малым","Дисциплина у тебя есть, долгов нет. Это фундамент, на котором можно строить гораздо больше."],["Ты заранее снижаешь себе цену","Тебе платят ровно столько, сколько ты разрешаешь. Остальное уходит к тем, кто называет цену спокойно."]],
  t:[["А вдруг не хватит","Денег будто всегда мало, даже когда они есть. То копишь «на чёрный день», то срываешься."],["Ты чувствуешь риск","Ты думаешь наперёд и умеешь беречь. Твоей осторожности не хватает только цифр вместо страха."],["Ты не знаешь своих цифр","Страх держится на неизвестности. Пока нет цифр, любая сумма кажется маленькой."]],
  z:[["Кто-то позаботится","Ты веришь, что всё решит мужчина или «как-нибудь само». Иногда так и бывает."],["Ты умеешь доверять","В тебе нет жадности и контроля, ты умеешь принимать. Этой мягкой силе не хватает только своей опоры."],["У тебя нет своих денег","Можно жить в достатке и не иметь ни рубля, о котором не надо отчитываться. Я так жила десять лет."]]};
+/* правка 2 контент-чата 11.11 (САЙТ_тексты_новый_kod.md, раздел «Правка 2», варианты А) */
 var LOSS = {
- u:["снова всё раздашь, а «себе» перенесёшь на потом.","близкие привыкнут, что ты всегда уступишь.","всё отдано, а своего так и не появилось."],
- s:["снова согласишься на меньше, чем стоишь.","другие с тем же умением будут получать больше.","«мне много не надо» станет твоим потолком."],
- t:["тот же страх открыть банк и та же выписка «не смотреть».","деньги будут приходить и исчезать незаметно.","тревога останется, даже если денег станет больше."],
- z:["твои деньги по-прежнему будут зависеть от чужого настроения.","каждая покупка — через разрешение и объяснения.","если «кто-то» уйдёт, ты останешься без своего."]};
+ u:["Кроссовки сыну, лекарства маме. Себе — опять ничего.","Дети привыкнут, что мама никогда ничего не хочет.","Оглянешься — всё отдано, а твоего так и нет."],
+ s:["Снова скажешь «сколько не жалко» — и получишь копейки.","Кто-то с твоим опытом попросит больше — и получит.","Ты всё так же скромная. И всё так же без денег."],
+ t:["Снова не откроешь банк, пока не придёт смс о минусе.","Отпуск, ремонт, мечта — всё «когда станет спокойнее».","Денег станет больше. А страх останется тем же."],
+ z:["Опять попросишь у него на мелочь — и объяснишь зачем.","Каждая твоя покупка — через его «а зачем тебе?».","Он уйдёт или передумает — а своего у тебя нет."]};
+var LOSS_FIN = {u:"Это не забота. Это твоя жизнь, отданная по кусочку.",s:"Пока ты молчишь о своей цене, её называют за тебя.",t:"Страх не уходит сам. Он растёт вместе с суммами.",z:"Пока ключ у него, дверь открывает он."};
+var PAIRS_W = {
+ zarplata:[["Занимаю до зарплаты","Неделя до зарплаты — спокойно"],["Боюсь открыть банк","Знаю свою цифру"],["Трачу «последнее»","У меня есть запас"]],
+ svoi:[["Прячу чеки","Покупаю без объяснений"],["Спрашиваю разрешения","Решаю сама"],["Ни рубля своего","Счёт, о котором знаю я"]],
+ nezavisimost:[["«А куда я пойду?»","Знаю, что справлюсь"],["Молчу из страха","Говорю «нет» спокойно"],["Рядом по необходимости","Рядом по любви"]],
+ kopit:[["Коплю, что останется","Сначала откладываю себе"],["Срываюсь на первом «надо»","Сумма растёт"],["Коплю без цели","Знаю, на что коплю"]],
+ cena:[["«Сколько не жалко»","Называю цифру спокойно"],["Работаю за «спасибо»","Мне платят за работу"],["Боюсь просить прибавку","Прошу прибавку вслух"]],
+ sebe:[["Прячу пакеты","Радуюсь покупке"],["Себя — «на потом»","Себе — тоже сейчас"],["Чувствую вину","Чувствую, что можно"]]};
+var O_HEAD = "Ты через <em>14 дней</em>", O_SUB = "По 15 минут в день. Без теории.", P_HEAD = "Твой код открыт. <em>Дальше — ты.</em>";
 var DAYS = {
  u:["видишь, сколько твоих денег уходит на других.","у тебя есть счёт «Моё», и он не пустой.","говоришь «теперь моя очередь» — без вины."],
  s:["слышишь, чей голос говорит «мне много не надо».","знаешь, сколько на самом деле стоит месяц твоей жизни.","у тебя записан свой прайс, и ты его называешь."],
@@ -559,8 +569,8 @@ var ICO = {cal:'<path d="M5 6h14v13H5z"/><path d="M8 3v5M16 3v5M5 10h14"/><path 
            crn:'<path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/>'};
 var INSIDE = [["cal","14 заданий по 10–15 минут"],["key","Подсказки под твой код"],["wal","Свой счёт «Моё»"],["msg","Фразы для разговора о деньгах"],["crn","Свой прайс и правила"]];
 var VALUE = "14 дней — и деньги впервые начнут оставаться у тебя, а не проходить мимо.";
-var BTN = "Начать свои 14 дней";
-var TIMER_LINE = function(p){return "Закроешь страницу — код останется, а цена "+p+" уйдёт."};
+var BTN = "Да, я начинаю сегодня";
+var TIMER_LINE = function(p,full){return "Закроешь — будет "+full+". А всё останется как было."};
 
 /* ===== помощники ===== */
 var answers=[],cur=0,busy=false,result=null,curWish=null,timerId=null,kIdx=0;
@@ -661,7 +671,7 @@ $("k-next").onclick=function(){
 function renderLoss(){
   var L=LOSS[result]||[],items=[["1","МЕСЯЦ",L[0]],["1","ГОД",L[1]],["5","ЛЕТ",L[2]]];
   $("loss").innerHTML=items.filter(function(x){return x[2]}).map(function(x){return '<div class="li"><div class="when">'+x[0]+'<small>'+x[1]+'</small></div><p>'+esc(x[2].replace(/[A-Za-zА-Яа-яЁё]/,function(c){return c.toUpperCase()}))+'</p></div>'}).join("");
-  var fin=(window.LOSS_FIN||{})[result];$("loss-fin").hidden=!fin;if(fin)$("loss-fin").textContent=fin;
+  var fin=LOSS_FIN[result];$("loss-fin").hidden=!fin;if(fin)$("loss-fin").textContent=fin;
   $("w-box").hidden=true;$("w-go").hidden=false;
   $("w-go").onclick=function(){vibr();$("w-go").hidden=true;$("w-box").hidden=false;setTimeout(function(){$("w-box").scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})},60)};
   $("w-intro").textContent=KT.chat.intro;
@@ -675,7 +685,7 @@ function renderNew(wish){
   curWish=wish;var r=T[result],L=wish.landing;
   $("nv-tag").textContent="ТВОЙ КОД · «"+r.name.toUpperCase()+"»";
   $("nv-wish").textContent=wish.label;
-  var PR=(window.PAIRS3&&PAIRS3[result])||r.pairs.slice(0,3);
+  var PR=PAIRS_W[wish.id]||r.pairs.slice(0,3);
   $("ba").innerHTML=PR.map(function(p){return '<div class="flip rv"><div class="in"><div class="sd was"><small>СЕЙЧАС</small><p>'+esc(p[0])+'</p></div><div class="sd now"><small>✦ ЧЕРЕЗ 14 ДНЕЙ</small><p>'+esc(p[1])+'</p></div></div></div>'}).join("");
   [].forEach.call($("ba").children,function(f,i){f.onclick=function(){f.classList.toggle("on");vibr()};if(!reduce)setTimeout(function(){f.classList.add("on")},1600+i*650)});
   store("yl_offer_kodnew",JSON.stringify({r:result,w:wish.id,t:Date.now()}));
@@ -689,7 +699,7 @@ function renderOffer(){
   var D=DAYS[result]||[],cap=function(t){return t.charAt(0).toUpperCase()+t.slice(1)};
   $("o-tl").innerHTML=[["ДЕНЬ 1",D[0]],["ДЕНЬ 7",D[1]],["ДЕНЬ 14",D[2]]].map(function(x){return '<div class="p"><b>'+x[0]+'</b><span>'+esc(cap(x[1]||""))+'</span></div>'}).join("");
   $("o-inside").innerHTML=INSIDE.slice(0,3).concat(INSIDE.slice(3)).map(function(x){return '<div class="t card"><span class="ii"><svg viewBox="0 0 24 24">'+ICO[x[0]]+'</svg></span>'+esc(x[1])+'</div>'}).join("");
-  if(window.O_HEAD)$("o-title").innerHTML=O_HEAD;if(window.O_SUB)$("o-sub").textContent=O_SUB;
+  $("o-title").innerHTML=O_HEAD;$("o-sub").textContent=O_SUB;
   $("o-value").textContent=VALUE;
   $("o-disc").textContent=(KT.offer.note?KT.offer.note+" ":"")+(KT.offer.disclaimer||"");
   show("s-offer");
@@ -704,7 +714,7 @@ function renderPrice(){
   $("o-pay3").href=$("o-pay").href+"&t=3";$("st-pay").href=$("o-pay").href;
   $("o-tg").href=CONFIG.TG_BOT_URL+"?start=kod_"+result;
   if(KT.offer.disclaimer)$("o-disc").textContent=(KT.offer.note?KT.offer.note+" ":"")+KT.offer.disclaimer;
-  if(window.P_HEAD)$("p-head").innerHTML=P_HEAD;
+  $("p-head").innerHTML=P_HEAD;
   setTar(1);show("s-price");sitePrice(id,q,true);
 }
 [].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){vibr();setTar(+b.dataset.t)}});
@@ -719,7 +729,7 @@ function sitePrice(id,q,start){
       $("o-price").textContent=rub(p);$("o-old").textContent=strike?rub(strike):"";$("st-price").textContent=rub(p);
       if(set){$("s-txt").textContent="Твой практикум + ещё два, которые продолжают тему. По отдельности — "+rub(S.strike)+", вместе — "+rub(p)+".";$("o-pay3").innerHTML="Взять 3 практикума за "+rub(p)+' <span class="arr">→</span>'}
       else $("o-pay").innerHTML=BTN+' <span class="arr">→</span>';
-      $("o-tnote").textContent=on?TIMER_LINE(rub(set?S.low:d.low)):"Спеццена закончилась. Сейчас — "+rub(p)+".";
+      $("o-tnote").textContent=on?TIMER_LINE(rub(set?S.low:d.low),rub(set?S.full:d.full)):"Спеццена закончилась. Сейчас — "+rub(p)+".";
       $("st-pay").href=set?$("o-pay3").href:$("o-pay").href;
     };
     clearInterval(timerId);
