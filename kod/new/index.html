@@ -758,7 +758,7 @@ document.addEventListener("click",function(e){
 $("q-back").onclick=function(){if(busy)return;if(cur===0){show("s-intro");return}cur--;answers.length=cur;fadeQ()};
 
 /* вернулась в течение 12 ч — сразу её «новая версия» и цена, без теста заново */
-(function(){var o=null;try{o=JSON.parse(store("yl_offer_kodnew")||"null")}catch(e){}
+(function(){var o=null;try{o=PREVIEW?null:JSON.parse(store("yl_offer_kodnew")||"null")}catch(e){} /* черновик всегда с начала — автор смотрит весь путь */
   var w=o&&o.t&&Date.now()-o.t<432e5&&T[o.r]&&KT.wishes.filter(function(x){return x.id===o.w})[0];
   if(w){result=o.r;renderNew(w)}else show("s-intro")})();
 </script>
