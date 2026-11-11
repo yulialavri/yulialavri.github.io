@@ -726,15 +726,17 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
     if(href.indexOf(BASE)!==0) return; /* запасные ссылки из настроек — как раньше */
     e.preventDefault();
     if(paid&&prm(href,"s")===prm(pay.href,"s")){pf.hidden=false;lock(true);return}
-    ok.hidden=true; document.getElementById("pf-int").hidden=false; load(href+"&f=1");
+    ok.hidden=true; intOn=false; var pi=document.getElementById("pf-int"); pi.hidden=false; pi.textContent=INT_TXT; load(href+"&f=1");
     pf.hidden=false; lock(true);
     clearInterval(poll); until=Date.now()+30*6e4; poll=setInterval(check,4000);
     /* таймер 30 минут стартует с нажатия — обновим цену на странице */
     setTimeout(function(){ if(typeof sitePrice==="function"){var s=prm(href,"s"); sitePrice(s,"&q="+encodeURIComponent(prm(href,"q"))+"&w="+encodeURIComponent(prm(href,"w"))+"&k="+encodeURIComponent(prm(href,"k")))} },2500);
   }
   function load(u){ document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank"){fr.className="";document.getElementById("pf-load").hidden=true}}; fr.src=u; }
-  document.getElementById("pf-int").addEventListener("click",function(){ /* lava.top: карта не из России, цена по курсу ЦБ (п. 79) */
-    this.hidden=true; load(href.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")+"&f=1");
+  var INT_TXT="🌍 Карта не из России? Оплатить в долларах →", RU_TXT="← Назад: оплата картой РФ или СБП", intOn=false;
+  document.getElementById("pf-int").addEventListener("click",function(){ /* lava.top: карта не из России, цена по курсу ЦБ (п. 79); 11.11 — оплата остаётся в окне, можно вернуться */
+    intOn=!intOn; this.textContent=intOn?RU_TXT:INT_TXT;
+    load(intOn ? href.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")+"&f=1" : href+"&f=1");
   });
   function close(){ pf.hidden=true; lock(false); if(!paid) fr.src="about:blank"; }
   pay.addEventListener("click",open);
