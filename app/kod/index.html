@@ -165,15 +165,15 @@ h1{font-size:clamp(36px,10vw,46px)}h2{font-size:clamp(28px,8vw,34px)}em{font-sty
 
   <section class="scr" id="s-swipe">
     <div class="top"><div class="prog"><i id="prog"></i></div><div class="cnt" id="cnt">1/9</div></div>
-    <div class="ask">Это про тебя?</div>
+    <div class="ask">Свайпни вправо — про меня, влево — не про меня</div>
     <div class="stack" id="stack"></div>
     <div class="vote"><button class="n" id="v-no">✕ Не про меня</button><button class="y" id="v-yes">Про меня ♥</button></div>
-    <div class="hint">Можно смахнуть карточку влево или вправо</div>
+    <div class="hint">или нажми кнопку</div>
   </section>
 
   <section class="scr calc" id="s-calc">
     <div class="ring"></div>
-    <h2>Собираю <em>твой код</em>…</h2>
+    <h2>Готово. <em>Смотрим твой код</em> 👇</h2>
   </section>
 
   <section class="scr res" id="s-res">
@@ -276,14 +276,16 @@ var CARDS = {
  t:[["А вдруг не хватит","Денег будто всегда мало, даже когда они есть. То копишь «на чёрный день», то срываешься."],["Ты чувствуешь риск","Ты думаешь наперёд и умеешь беречь. Твоей осторожности не хватает только цифр вместо страха."],["Ты не знаешь своих цифр","Страх держится на неизвестности. Пока нет цифр, любая сумма кажется маленькой."]],
  z:[["Кто-то позаботится","Ты веришь, что всё решит мужчина или «как-нибудь само». Иногда так и бывает."],["Ты умеешь доверять","В тебе нет жадности и контроля, ты умеешь принимать. Этой мягкой силе не хватает только своей опоры."],["У тебя нет своих денег","Можно жить в достатке и не иметь ни рубля, о котором не надо отчитываться."]]};
 
-/* черновые тексты до контент-чата (сайт/МИНИАПП_kod_тексты.md) */
-var SWIPES = [["🎁","Сначала куплю всем, себе — что останется","u"],["🙈","Мне много не надо","s"],["📱","Не открываю банк, чтобы не расстраиваться","t"],["💍","Пусть он решает, на что тратить","z"],
-              ["🤲","Мне проще отдать, чем попросить","u"],["🏷","Называю цену поменьше — так удобнее","s"],["😰","Всё время кажется: а вдруг не хватит","t"],["⏳","Жду, что всё как-нибудь устроится","z"],["🛍","Куплю себе и потом жалею","t"]];
+/* тексты — контент-чат 11.11 (сайт/МИНИАПП_kod_тексты.md, варианты А) */
+var SWIPES = [["🎁","Сначала куплю детям, потом себе","u"],["🙈","Мне много не надо","s"],["📱","Боюсь открыть банковское приложение","t"],["💍","Деньги в семье решает он","z"],
+              ["🤲","Мне проще дать, чем попросить","u"],["🏷","Назвать свою цену — неловко","s"],["😰","Денег всегда как будто не хватает","t"],["⏳","Как-нибудь само наладится","z"],["🧺","Себе — что останется","u"]];
 var GAME = [
-  {q:"Сколько ты хочешь в месяц <em>только на себя</em>?", o:[["💗","50 000 ₽","Хорошее начало — и это реально"],["✨","150 000 ₽","Вот это уже про жизнь, а не про выживание"],["👑","300 000 ₽","Смело. Мне нравится"],["🚀","Больше","Тогда тем более важно, где они утекают"]]},
-  {q:"Куда уходит <em>больше всего</em>?", o:[["👨‍👩‍👧","На других — семья, подарки","u"],["🔒","Никуда — я экономлю на себе","s"],["🌀","Сама не понимаю куда","t"],["🙏","Решает он — я прошу","z"]], r:{u:"Ты отдаёшь раньше, чем оставляешь себе",s:"Экономия на себе — тоже утечка",t:"То, что не видно, утекает быстрее всего",z:"Пока решает он — это не твои деньги"}},
-  {q:"Что мешает <em>больше всего</em>?", o:[["😔","Неловко тратить на себя","u"],["🙊","Боюсь назвать свою цену","s"],["😟","Страшно смотреть в цифры","t"],["🫥","Нет своего — всё общее","z"]], r:{u:"Это просто привычка. Её можно сменить",s:"Цену можно назвать спокойно — этому учатся",t:"Цифры успокаивают, когда к ним привыкаешь",z:"Своё начинается с первого рубля"}}];
-var CONCL = {u:"Код <b>«Удобной»</b> отдаёт их другим раньше, чем ты успеваешь их заметить.",s:"Код <b>«Скромной»</b> заранее снижает тебе цену — и до этой суммы ты себя не пускаешь.",t:"Код <b>«Тревожной»</b> прячет их в страхе: пока нет цифр, любая сумма кажется маленькой.",z:"Код <b>«Ждущей»</b> держит их в чужих руках: своё пока не начиналось."};
+  {q:"Сколько ты хочешь в месяц <em>только на себя</em>?", o:[["💗","50 000 ₽","Честно. С этой суммы и начнём 🤍"],["✨","150 000 ₽","Смело. Запомни эту цифру"],["👑","300 000 ₽","Вот это разговор. Записала ✨"],["🚀","Больше","Хочешь много — имеешь право"]]},
+  {q:"Куда уходит <em>больше всего</em>?", o:[["👨‍👩‍👧","На детей, семью, подарки","u"],["🏷","Мне платят меньше, чем стою","s"],["🌀","Не знаю, просто исчезают","t"],["🙏","Своих почти нет, трачу его","z"]], r:{u:"Всем — да. А тебе?",s:"Значит, дело не в тратах, а в цене",t:"Тогда начнём с того, куда",z:"Вот где течёт: своего нет"}},
+  {q:"Что мешает <em>больше всего</em>?", o:[["😔","Неудобно тратить на себя","u"],["🙊","Стесняюсь просить больше","s"],["😟","Страх, что не хватит","t"],["🫥","Жду, что кто-то решит","z"]], r:{u:"Неудобно — пока не попробуешь",s:"Стеснение стоит тебе денег каждый месяц",t:"Страх меньше, когда есть цифры",z:"Пока ждёшь — решают за тебя"}}];
+var CONCL = {u:"Код <b>«Удобной»</b> отдаёт их другим раньше, чем ты успеваешь их заметить.",s:"Код <b>«Скромной»</b> снижает тебе цену раньше, чем с тобой начали торговаться.",t:"Код <b>«Тревожной»</b> прячет эту цифру за страхом — и деньги уходят незаметно.",z:"Код <b>«Ждущей»</b> отдаёт ключ от этих денег другому."};
+var CONCL2 = "В практикуме ты увидишь, где они теряются, и соберёшь план на месяц — свой.";
+var P_HEAD = function(sum){return sum+" в месяц — <em>начни с первого шага</em>"}, P_BTN = "Хочу, чтобы деньги оставались у меня";
 var TCOL={u:"#C9919E",s:"#C9A45C",t:"#9A5A7C",z:"#4A1E37"}, ORDER2=["z","u","s","t"];
 
 var tg=window.Telegram&&Telegram.WebApp, API="https://bot.yulialavri.ru/bot/app.php", THEME="kod";
@@ -325,7 +327,7 @@ function drag(el){var x0=null,dx=0;
 /* 3 → 4: подсчёт и код */
 var result=null,cnt={u:0,s:0,t:0,z:0};
 function calc(){show("s-calc");cnt={u:0,s:0,t:0,z:0};yes.forEach(function(k){cnt[k]++});
-  var max=Math.max(cnt.u,cnt.s,cnt.t,cnt.z);result=max?ORDER2.filter(function(k){return cnt[k]===max})[0]:"z";if(!max)cnt.z=1;
+  var max=Math.max(cnt.u,cnt.s,cnt.t,cnt.z),tied=["u","s","t","z"].filter(function(k){return max&&cnt[k]===max});result=!max?"z":tied.length===1?tied[0]:(yes.slice().reverse().filter(function(k){return tied.indexOf(k)>-1})[0]);if(!max)cnt.z=1; /* при равенстве — тип последней карточки «про меня» */
   api("result",{type:result});setTimeout(renderRes,1600)}
 function renderRes(){
   var r=T[result],CC=CARDS[result],n=cnt.u+cnt.s+cnt.t+cnt.z;hap("ok");
@@ -350,12 +352,12 @@ function pickG(i,b){if($("gopts")._busy)return;$("gopts")._busy=1;hap("medium");
   setTimeout(function(){$("gopts")._busy=0;gi++;if(gi<GAME.length){renderGame();return}ev("game");renderConcl()},1700)}
 
 /* 6: вывод */
-function renderConcl(){var sum=ans[0]?ans[0][1]:"";$("c-sum").textContent=sum==="Больше"?"больше 300 000 ₽":sum;$("c-text").innerHTML=CONCL[result];show("s-concl");hap("ok")}
+function renderConcl(){var sum=ans[0]?ans[0][1]:"";$("c-sum").textContent=sum==="Больше"?"больше 300 000 ₽":sum;$("c-text").innerHTML=CONCL[result]+"<br><br><span style=\"font-size:16px;color:rgba(255,255,255,.85)\">"+CONCL2+"</span>";SUMTXT=$("c-sum").textContent;show("s-concl");hap("ok")}
 $("c-next").onclick=function(){hap();renderPrice()};
 
 /* 7: цена (таймер с показа, п. 86) и оплата внутри Telegram */
-var P=null,TAR=1,timer=null,on=true,poll=null;
-function renderPrice(){show("s-price");ev("price");api("price").then(function(d){if(!d||!d.ok)return;P=d;if(d.paid){show("s-ok");return}
+var SUMTXT="",P=null,TAR=1,timer=null,on=true,poll=null;
+function renderPrice(){if(SUMTXT)$("p-head").innerHTML=P_HEAD(SUMTXT);show("s-price");ev("price");api("price").then(function(d){if(!d||!d.ok)return;P=d;if(d.paid){show("s-ok");return}
   $("seg").hidden=!d.set;if(d.set){var ul=$("p-list");ul.innerHTML=d.set.names.map(function(n){return "<li>"+esc(n)+"</li>"}).join("")}
   $("p-int").hidden=!d.lava;var shift=Date.now()-d.now*1000,dl=d.deadline*1000;clearInterval(timer);
   var tick=function(){var left=dl-(Date.now()-shift);on=left>0;paint();if(!on){clearInterval(timer);$("p-timer").classList.add("over");$("p-left").textContent="";return}
@@ -363,7 +365,7 @@ function renderPrice(){show("s-price");ev("price");api("price").then(function(d)
   tick();timer=setInterval(tick,1000)})}
 function paint(){if(!P)return;var set=TAR===3&&P.set,p=set?(on?P.set.low:P.set.full):(on?P.low:P.full),strike=set?P.set.strike:(on?P.full:0);
   $("p-price").textContent=rub(p);$("p-old").textContent=strike?rub(strike):"";$("p-list").hidden=!set;$("p-label").textContent=set?"3 ПРАКТИКУМА · 42 ДНЯ":"ДЕНЕЖНЫЙ КОД · 14 ДНЕЙ";
-  $("p-pay").innerHTML=(set?"Взять 3 практикума за "+rub(p):"Да, я начинаю сегодня")+" <span>→</span>";
+  $("p-pay").innerHTML=(set?"Взять 3 практикума за "+rub(p):P_BTN)+" <span>→</span>";
   $("p-note").textContent=on?"Закроешь — будет "+rub(set?P.set.full:P.full)+". А всё останется как было.":"Спеццена закончилась. Сейчас — "+rub(p)+"."}
 [].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){hap();TAR=+b.dataset.t;[].forEach.call($("seg").children,function(x){x.classList.toggle("on",x===b)});paint()}});
 $("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");$("pf-f").src=TAR===3&&P.set?P.set.pay:P.pay;$("pf").hidden=false;
