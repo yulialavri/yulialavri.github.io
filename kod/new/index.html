@@ -307,6 +307,9 @@ em{font-style:italic;color:var(--plum)}
 .sticky .info small{font-size:12px;color:#B05A68;font-weight:700;font-variant-numeric:tabular-nums}
 .sticky .btn{min-height:52px;font-size:16px;border-radius:16px}
 
+.navback{position:fixed;top:max(14px,env(safe-area-inset-top));left:max(12px,calc(50% - 228px));z-index:45;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.92);box-shadow:0 8px 18px -10px rgba(74,30,55,.6);font-size:20px;color:var(--plum)}
+.pullhint{position:fixed;top:0;left:50%;z-index:46;transform:translate(-50%,-60px);padding:9px 16px;border-radius:999px;background:var(--plum);color:#fff;font-size:14px;font-weight:800;box-shadow:var(--sh1);transition:transform .2s ease,opacity .2s;opacity:0;pointer-events:none}
+.pullhint.ready{background:var(--gold-d)}
 footer{text-align:center;font-size:12px;color:var(--mut);padding:24px 0 10px;line-height:1.5}
 footer a{color:var(--mut)}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
@@ -455,6 +458,8 @@ footer a{color:var(--mut)}
 </main>
 
 <div class="sticky" id="sticky"><div class="row"><div class="info"><b id="st-price">990 ₽</b><small id="st-left">⏳ 30:00</small></div><a class="btn btn--main" id="st-pay" href="#">Начать 14 дней →</a></div></div>
+<button class="navback" id="navback" type="button" aria-label="Назад" hidden>←</button>
+<div class="pullhint" id="pullhint">↑ Назад</div>
 <div class="toast" id="toast"><span class="mono sm"><b>ЮЛ</b></span><p id="toast-t"></p></div>
 
 <script>
@@ -584,14 +589,40 @@ function track(e){try{window.ylTrack&&window.ylTrack(e)}catch(x){}}
 function rub(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" ₽"}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 
-function show(id){
+/* история экранов: назад — стрелкой, жестом «назад» и потянув страницу вниз в самом верху (автор 11.11) */
+var HIST=[],NOBACK={"s-intro":1,"s-q":1,"s-an":1};
+function show(id,back){
   var next=$(id),prev=document.querySelector(".scr.on");
   if(prev===next)return;
+  if(!back&&prev&&prev.id!=="s-an"&&!(prev.id==="s-q"&&id==="s-q")){HIST.push(prev.id);try{history.pushState({yl:HIST.length},"")}catch(e){}}
+  if(id==="s-intro")HIST=[];
+  $("navback").hidden=!!NOBACK[id]||!HIST.length;
   var go=function(){if(prev)prev.classList.remove("on","show");next.classList.add("on");window.scrollTo(0,0);
     requestAnimationFrame(function(){requestAnimationFrame(function(){next.classList.add("show");reveal()})})};
   if(prev&&!reduce){prev.classList.remove("show");setTimeout(go,300)}else go();
   $("sticky").classList.remove("on");
 }
+function goBack(){
+  var cur=document.querySelector(".scr.on"),id=cur&&cur.id;
+  if(id==="s-q"){$("q-back").click();return}
+  if(!HIST.length||NOBACK[id])return;
+  var to=HIST.pop();vibr();
+  if(to==="s-an")to=HIST.pop()||"s-intro";
+  if(to==="s-q"){ /* с промежуточного экрана или результата — к последнему отвеченному вопросу */
+    cur_back_q(id);return}
+  show(to,true);
+}
+function cur_back_q(from){cur=from==="s-mid"?2:Q.length-1;answers.length=cur;renderQ();show("s-q",true)}
+function backNav(){var st=history.state;if(st&&st.yl)history.back();else goBack()} /* стрелка и жест снимают ту же запись истории, что и «назад» браузера */
+$("navback").onclick=backNav;
+window.addEventListener("popstate",function(){goBack()});
+/* потянуть вниз в самом верху экрана — назад */
+(function(){var y0=null,dy=0,h=$("pullhint");
+  document.addEventListener("touchstart",function(e){var c=document.querySelector(".scr.on");if(window.scrollY>0||!c||NOBACK[c.id]||!HIST.length){y0=null;return}y0=e.touches[0].clientY;dy=0},{passive:true});
+  document.addEventListener("touchmove",function(e){if(y0===null)return;dy=e.touches[0].clientY-y0;if(dy<=0||window.scrollY>0){h.style.opacity=0;return}
+    var k=Math.min(dy,140);h.style.opacity=Math.min(1,k/60);h.style.transform="translate(-50%,"+(k*.5-20)+"px)";h.classList.toggle("ready",dy>110)},{passive:true});
+  document.addEventListener("touchend",function(){if(y0!==null&&dy>110)backNav();y0=null;dy=0;h.style.opacity=0;h.style.transform="translate(-50%,-60px)";h.classList.remove("ready")});
+})();
 /* появление блоков при прокрутке */
 var io=("IntersectionObserver" in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.15}):null;
 function reveal(){document.querySelectorAll(".scr.on .rv:not(.in)").forEach(function(el){io?io.observe(el):el.classList.add("in")})}
