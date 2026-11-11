@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6EEE8">
+<meta name="robots" content="noindex">
+<title>Денежный код — тест за 1 минуту | Юлия Лаври</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Новый сайт теста «Денежный код» (СТАНДАРТ п. 86, 11.11): живой, объёмный, каждый шаг тянет к следующему */
+:root{
+  --bg:#F6EEE8;--bg2:#F1E1DF;--bg3:#ECE1EE;--bg4:#F5E7D3;
+  --plum:#6E2F51;--plum-deep:#4A1E37;--rose:#C9919E;--rose-soft:#F4E4E5;
+  --gold:#C9A45C;--gold-d:#9C7A42;--gold-l:#F3E2B6;
+  --tx:#2F2629;--mut:#7A6A6F;--line:rgba(201,164,92,.28);
+  --card:rgba(255,255,255,.74);
+  --sh1:0 1px 0 rgba(255,255,255,.9) inset,0 2px 6px -2px rgba(74,30,55,.10),0 22px 44px -20px rgba(74,30,55,.38);
+  --sh2:0 1px 0 rgba(255,255,255,.9) inset,0 30px 60px -24px rgba(74,30,55,.48),0 8px 18px -10px rgba(74,30,55,.25);
+  --serif:"Cormorant Garamond",Georgia,serif;--sans:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--tx);font:17px/1.5 var(--sans);overflow-x:hidden;min-height:100svh;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+/* живой фон: перламутровые пятна медленно плывут */
+.bgfx{position:fixed;inset:-20%;z-index:-2;pointer-events:none;background:var(--bg)}
+.bgfx i{position:absolute;border-radius:50%;filter:blur(40px);opacity:.9;animation:float 22s ease-in-out infinite alternate}
+.bgfx i:nth-child(1){width:60vmax;height:60vmax;left:-10%;top:-5%;background:radial-gradient(circle,var(--bg2),transparent 65%)}
+.bgfx i:nth-child(2){width:55vmax;height:55vmax;right:-15%;top:15%;background:radial-gradient(circle,var(--bg3),transparent 65%);animation-duration:28s;animation-delay:-6s}
+.bgfx i:nth-child(3){width:65vmax;height:65vmax;left:10%;bottom:-25%;background:radial-gradient(circle,var(--bg4),transparent 65%);animation-duration:32s;animation-delay:-12s}
+@keyframes float{0%{transform:translate(0,0) scale(1)}100%{transform:translate(6%,-5%) scale(1.12)}}
+.sparks{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.sparks b{position:absolute;width:4px;height:4px;border-radius:50%;background:radial-gradient(circle,#fff,var(--gold-l) 40%,transparent 70%);opacity:0;animation:spark 7s linear infinite}
+@keyframes spark{0%{opacity:0;transform:translateY(0) scale(.6)}15%{opacity:.9}100%{opacity:0;transform:translateY(-38vh) scale(1.2)}}
+
+main{max-width:480px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 18px 120px;position:relative}
+.scr{display:none;opacity:0;transform:translateY(18px) scale(.985);transition:opacity .45s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.scr.on{display:block}
+.scr.show{opacity:1;transform:none}
+
+/* лавр: крупный, золото переливается */
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+.lf{fill:url(#gShine);fill-opacity:.75}
+.ln{fill:none;stroke:url(#gShine);stroke-width:1.8}
+.lf,.ln{vector-effect:non-scaling-stroke}
+.laurel{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 10px rgba(156,122,66,.35));will-change:transform}
+.laurel svg{width:100%;height:100%;overflow:visible;display:block}
+.sway{animation:sway 6s ease-in-out infinite alternate;transform-origin:50% 100%}
+@keyframes sway{0%{transform:rotate(-2.5deg)}100%{transform:rotate(2.5deg)}}
+
+.brand{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mut);position:relative;z-index:2}
+.mono{position:relative;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#7A3A5D,var(--plum-deep) 72%);box-shadow:0 8px 18px -8px rgba(74,30,55,.7),0 0 0 2px rgba(243,226,182,.5);flex:none}
+.mono b{font:700 15px/1 var(--serif);color:var(--gold-l);letter-spacing:-.04em}
+.mono.sm{width:34px;height:34px}.mono.sm b{font-size:12px}
+
+/* типографика */
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.08;color:var(--plum-deep);letter-spacing:-.01em}
+h1{font-size:clamp(40px,11vw,54px)}
+h2{font-size:clamp(30px,8.4vw,38px)}
+h3{font-size:24px}
+em{font-style:italic;color:var(--plum)}
+.gold-text{background:linear-gradient(100deg,#7E5E2C 0%,#C9A45C 25%,#8C6A36 45%,#E7C987 60%,#7E5E2C 80%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:goldtext 4s linear infinite}
+@keyframes goldtext{to{background-position:-250% 0}}
+.lead{font-size:18px;color:var(--mut)}
+.small{font-size:13.5px;color:var(--mut)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--plum);background:rgba(255,255,255,.75);border:1px solid var(--line);padding:8px 14px;border-radius:999px;box-shadow:0 6px 14px -10px rgba(74,30,55,.4)}
+
+/* карточки с объёмом */
+.card{background:var(--card);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);border:1px solid rgba(255,255,255,.85);border-radius:24px;box-shadow:var(--sh1);position:relative}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.55),transparent 40%);mix-blend-mode:soft-light}
+
+/* кнопки */
+.btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:62px;padding:16px 22px;border-radius:20px;font-size:18px;font-weight:800;text-align:center;text-decoration:none;overflow:hidden;transition:transform .15s ease,box-shadow .25s ease}
+.btn--main{color:#fff;background:linear-gradient(120deg,#B57A8A 0%,var(--plum) 50%,var(--plum-deep) 100%);box-shadow:0 18px 34px -14px rgba(110,47,81,.7),0 1px 0 rgba(255,255,255,.35) inset}
+.btn--main::before{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:sheen 3.2s ease-in-out infinite}
+@keyframes sheen{0%,55%{left:-60%}100%{left:130%}}
+.btn--gold{color:var(--plum-deep);background:linear-gradient(120deg,#F6E6BE,#D9B977 55%,#B8904F);box-shadow:0 16px 30px -14px rgba(156,122,66,.75),0 1px 0 rgba(255,255,255,.6) inset}
+.btn--ghost{color:var(--plum);background:rgba(255,255,255,.8);border:1.5px solid var(--rose);box-shadow:0 10px 22px -16px rgba(74,30,55,.5)}
+.btn:active{transform:scale(.97)}
+.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 18px 34px -14px rgba(110,47,81,.7),0 0 0 0 rgba(201,145,158,.5)}50%{box-shadow:0 18px 34px -14px rgba(110,47,81,.7),0 0 0 12px rgba(201,145,158,0)}}
+.btn .arr{transition:transform .3s ease}.btn:hover .arr{transform:translateX(4px)}
+.link{display:block;margin:18px auto 0;font-size:14.5px;color:var(--mut);text-decoration:underline;text-underline-offset:3px;min-height:44px}
+
+/* появление при прокрутке */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* 1. Вход */
+.hero{position:relative;min-height:calc(100svh - 40px);display:flex;flex-direction:column;padding-top:8px}
+.hero .laurel.l{left:-78px;top:70px;width:200px;height:270px}
+.hero .laurel.r{right:-78px;top:70px;width:200px;height:270px;transform:scaleX(-1)}
+.hero .laurel.r .sway{animation-delay:-3s}
+.hero-mid{position:relative;z-index:2;margin:auto 0;text-align:center;padding:36px 0 22px}
+.hero-mid .tag{margin-bottom:22px}
+.hero-mid h1{margin-bottom:16px}
+.hero-mid .lead{max-width:330px;margin:0 auto}
+.medal{width:118px;height:118px;margin:0 auto 26px;border-radius:50%;display:grid;place-items:center;position:relative;background:radial-gradient(circle at 35% 30%,#83406A,var(--plum-deep) 70%);box-shadow:0 26px 50px -18px rgba(74,30,55,.75),0 0 0 3px rgba(243,226,182,.55),0 0 0 10px rgba(243,226,182,.16);animation:bob 5s ease-in-out infinite}
+.medal::before{content:"";position:absolute;inset:-14px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 70%,rgba(243,226,182,.9) 80%,transparent 90%);animation:spin 4.5s linear infinite;-webkit-mask:radial-gradient(circle,transparent 62px,#000 63px);mask:radial-gradient(circle,transparent 62px,#000 63px)}
+.medal b{font:700 44px/1 var(--serif);letter-spacing:-.04em}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:22px 0 26px}
+.chips span{font-size:13.5px;font-weight:700;color:var(--plum);background:rgba(255,255,255,.7);border:1px solid var(--line);padding:9px 14px;border-radius:999px;box-shadow:0 8px 16px -12px rgba(74,30,55,.5)}
+.hero-bot{position:relative;z-index:2}
+.quote-line{font:italic 500 19px/1.35 var(--serif);color:var(--plum);text-align:center;margin-top:20px;opacity:.9}
+
+/* 2. Вопросы: полоски как в сторис */
+.qtop{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.back{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.75);box-shadow:0 8px 16px -12px rgba(74,30,55,.6);flex:none;font-size:20px;color:var(--plum)}
+.story{display:flex;gap:5px;flex:1}
+.story i{flex:1;height:5px;border-radius:5px;background:rgba(110,47,81,.12);overflow:hidden;position:relative}
+.story i::after{content:"";position:absolute;inset:0;width:var(--w,0%);background:linear-gradient(90deg,var(--gold),var(--plum));border-radius:5px;transition:width .5s ease}
+.qnum{font-size:13px;font-weight:800;letter-spacing:.14em;color:var(--gold-d);margin-bottom:10px}
+.qtext{font:600 clamp(28px,7.6vw,34px)/1.12 var(--serif);color:var(--plum-deep);margin-bottom:24px;min-height:2.3em}
+.opts{display:flex;flex-direction:column;gap:12px;perspective:900px}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:17px 18px;border-radius:20px;background:var(--card);border:1.5px solid rgba(255,255,255,.9);box-shadow:var(--sh1);font-size:17px;font-weight:600;color:var(--tx);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s ease,background .25s ease;opacity:0;transform:translateY(16px) rotateX(-12deg);animation:optin .5s cubic-bezier(.2,.8,.2,1) forwards}
+.opt:nth-child(2){animation-delay:.07s}.opt:nth-child(3){animation-delay:.14s}.opt:nth-child(4){animation-delay:.21s}
+@keyframes optin{to{opacity:1;transform:none}}
+.opt b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:14px;font-weight:800;color:var(--plum);background:linear-gradient(140deg,#fff,var(--rose-soft));border:1px solid var(--line)}
+.opt:active{transform:scale(.98)}
+.opt.picked{background:linear-gradient(120deg,#fff,#F7EBDD);border-color:var(--gold);box-shadow:var(--sh2);transform:translateY(-3px) scale(1.02)}
+.opt.picked b{background:linear-gradient(140deg,#F6E6BE,#C9A45C);color:#fff;border-color:transparent}
+.opt.dim{opacity:.45 !important;transform:scale(.97) !important}
+
+/* реплика Юлии */
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translate(-50%,140%);z-index:50;display:flex;align-items:center;gap:10px;max-width:440px;width:calc(100% - 36px);padding:12px 16px 12px 12px;border-radius:20px;background:rgba(255,255,255,.95);box-shadow:var(--sh2);transition:transform .45s cubic-bezier(.2,.9,.2,1.1)}
+.toast.on{transform:translate(-50%,0)}
+.toast p{font-size:15px;font-weight:600;color:var(--plum-deep)}
+
+/* 3. Промежуточный экран */
+.mid{text-align:center;padding-top:40px}
+.bubble{display:flex;gap:12px;align-items:flex-end;text-align:left;margin:26px 0}
+.bubble .msg{padding:16px 18px;border-radius:22px 22px 22px 6px;background:#fff;box-shadow:var(--sh1);font-size:17px;line-height:1.45}
+.big-ico{font-size:58px;line-height:1;animation:bob 4s ease-in-out infinite}
+
+/* 4. Анализ */
+.an{text-align:center;padding-top:48px}
+.ring{width:150px;height:150px;margin:0 auto 30px;position:relative}
+.ring::before{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid rgba(201,164,92,.18);border-top-color:var(--gold);border-right-color:var(--plum);animation:spin 1.1s linear infinite}
+.ring .laurel{position:absolute;inset:22px;width:auto;height:auto}
+.steps{list-style:none;text-align:left;padding:8px 20px;margin-top:22px}
+.steps li{display:flex;align-items:center;gap:12px;padding:14px 0;font-weight:600;color:var(--mut);transition:color .3s}
+.steps li + li{border-top:1px solid rgba(201,164,92,.18)}
+.steps .dot{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;color:#fff;flex:none;transition:all .35s}
+.steps li.done{color:var(--tx)}
+.steps li.done .dot{background:linear-gradient(140deg,#E7CD92,var(--gold));border-color:transparent;transform:scale(1.1)}
+
+/* 5. Результат */
+.res-head{text-align:center;padding-top:12px;position:relative}
+.res-head .laurel{width:250px;height:94px;margin:0 auto -6px;position:relative}
+.res-head h1{font-size:clamp(46px,13vw,62px);margin:6px 0 4px}
+.res-quote{font:italic 500 22px/1.3 var(--serif);color:var(--plum)}
+.gauge{margin:24px 0 8px;padding:20px 18px 16px;text-align:center}
+.gauge svg{width:100%;max-width:300px;height:auto;display:block;margin:0 auto}
+.gauge .lbls{display:flex;justify-content:space-between;font-size:13.5px;font-weight:800;color:var(--plum);max-width:300px;margin:4px auto 0}
+.gauge .cap{margin-top:12px;font-size:15.5px;color:var(--tx)}
+.gauge .cap b{color:var(--plum)}
+#needle{transform-origin:150px 150px;transition:transform 1.6s cubic-bezier(.3,1.4,.4,1)}
+
+/* колода карт */
+.deck-h{display:flex;justify-content:space-between;align-items:center;margin:26px 2px 12px}
+.deck-h b{font-size:13px;font-weight:800;letter-spacing:.14em;color:var(--gold-d)}
+.dots{display:flex;gap:6px}.dots i{width:8px;height:8px;border-radius:50%;background:rgba(110,47,81,.18);transition:all .3s}.dots i.on{width:22px;border-radius:6px;background:var(--plum)}
+.deck{position:relative;height:340px;perspective:1200px;transition:height .4s ease}
+.kc:not(.cur) .front>*{opacity:0;transition:opacity .2s}
+.kc.cur .front>*{opacity:1;transition:opacity .4s .2s}
+.kc{position:absolute;inset:0;border-radius:26px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .5s ease}
+.kc .face{position:absolute;inset:0;border-radius:26px;padding:24px 22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;overflow:hidden}
+.kc .front{background:linear-gradient(160deg,#fff 0%,#FBF4EE 100%);box-shadow:var(--sh2);border:1px solid rgba(255,255,255,.9)}
+.kc .front::before{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(243,226,182,.65),transparent 70%)}
+.kc .ico{font-size:34px;margin-bottom:10px;position:relative}
+.kc .kn{font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--gold-d);margin-bottom:8px;position:relative}
+.kc h3{margin-bottom:10px;position:relative;font-size:27px}
+.kc p{font-size:16px;line-height:1.5;color:var(--tx);position:relative}
+.kc .step{margin-top:auto;padding:12px 14px;border-radius:14px;background:linear-gradient(120deg,#FBF1DE,#F6E6C4);font-weight:700;color:var(--plum-deep);font-size:15px;position:relative}
+.kc .back-face{transform:rotateY(180deg);background:radial-gradient(circle at 30% 20%,#86426C,var(--plum-deep) 75%);box-shadow:var(--sh2);align-items:center;justify-content:center;text-align:center;color:#fff}
+.kc .back-face .lock{font-size:46px;margin-bottom:14px;animation:bob 3s ease-in-out infinite}
+.kc .back-face h3{color:var(--gold-l);margin-bottom:8px}
+.kc .back-face p{color:rgba(255,255,255,.82);margin-bottom:20px;font-size:15.5px}
+.kc.locked{transform:rotateY(180deg)}
+.kc.next1{transform:translateY(16px) scale(.94);opacity:.85;z-index:1}
+.kc.next2{transform:translateY(30px) scale(.88);opacity:.6;z-index:0}
+.kc.cur{z-index:3}
+.kc.gone{transform:translateX(-120%) rotate(-12deg);opacity:0;pointer-events:none}
+.kc.locked.next1{transform:translateY(16px) scale(.94) rotateY(180deg)}
+.kc.locked.next2{transform:translateY(30px) scale(.88) rotateY(180deg)}
+.deck-nav{margin-top:44px}
+
+/* потери */
+.loss{margin-top:8px}
+.loss .it{display:flex;gap:14px;padding:16px 18px;margin-bottom:12px;border-left:4px solid #C97A86}
+.loss .it .ic{font-size:26px;line-height:1.1;flex:none}
+.loss .it b{display:block;font-size:12px;font-weight:800;letter-spacing:.14em;color:#B05A68;margin-bottom:4px}
+.loss .it p{font-size:16px}
+.turn{text-align:center;margin:26px 0 8px;font:italic 600 24px/1.25 var(--serif);color:var(--plum)}
+
+/* желания */
+.wishes{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.wish{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:16px 18px;border-radius:18px;background:var(--card);border:1.5px solid rgba(255,255,255,.9);box-shadow:var(--sh1);font-weight:700;font-size:16px;transition:transform .2s ease,box-shadow .2s}
+.wish::before{content:"✦";color:var(--gold);font-size:18px}
+.wish:active{transform:scale(.98)}
+
+/* новая версия: было → стало */
+.ba{display:grid;gap:12px;margin:18px 0}
+.flip{position:relative;height:96px;perspective:900px;cursor:pointer}
+.flip .in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.flip.on .in{transform:rotateX(180deg)}
+.flip .sd{position:absolute;inset:0;border-radius:18px;padding:14px 16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;justify-content:center}
+.flip .was{background:rgba(255,255,255,.7);box-shadow:var(--sh1);border:1px solid rgba(255,255,255,.9)}
+.flip .was small{font-size:11.5px;font-weight:800;letter-spacing:.14em;color:var(--mut)}
+.flip .was p{color:var(--mut);text-decoration:line-through;text-decoration-color:rgba(201,122,134,.7);font-size:16px}
+.flip .now{transform:rotateX(180deg);background:linear-gradient(120deg,#FFF9EE,#F5E3BE);box-shadow:var(--sh2);border:1px solid rgba(201,164,92,.45)}
+.flip .now small{font-size:11.5px;font-weight:800;letter-spacing:.14em;color:var(--gold-d)}
+.flip .now p{font-weight:700;color:var(--plum-deep);font-size:16.5px}
+.hint{font-size:13px;color:var(--mut);text-align:center}
+.always{padding:18px 18px 14px;margin:16px 0}
+.always h4{font:600 21px/1.2 var(--serif);color:var(--plum-deep);margin-bottom:10px}
+.always li{list-style:none;display:flex;gap:10px;padding:6px 0;font-size:16px}
+.always li::before{content:"✓";color:var(--gold-d);font-weight:800}
+
+/* предложение */
+.offer-h{text-align:center;margin-bottom:18px}
+.tl{position:relative;margin:22px 0 10px;padding-left:30px}
+.tl::before{content:"";position:absolute;left:11px;top:8px;bottom:8px;width:2px;background:linear-gradient(var(--gold),var(--plum))}
+.tl .p{position:relative;margin-bottom:16px}
+.tl .p::before{content:"";position:absolute;left:-25px;top:4px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--gold);box-shadow:0 0 0 4px rgba(201,164,92,.18)}
+.tl .p b{display:block;font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--gold-d)}
+.tl .p span{font-size:16px;font-weight:600}
+.inside{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}
+.inside .t{padding:14px 12px;border-radius:18px;font-size:14px;font-weight:600;line-height:1.35}
+.inside .t i{display:block;font-style:normal;font-size:24px;margin-bottom:6px}
+.pricebox{padding:22px 20px;margin-top:22px;border:1.5px solid rgba(201,164,92,.5);box-shadow:var(--sh2)}
+.pricebox .seal{position:absolute;top:-16px;right:16px;font-size:11.5px;font-weight:800;letter-spacing:.12em;color:#fff;background:linear-gradient(120deg,#C97A86,var(--plum));padding:8px 12px;border-radius:999px;box-shadow:0 10px 18px -10px rgba(110,47,81,.8)}
+.plabel{font-size:13px;font-weight:800;letter-spacing:.14em;color:var(--mut)}
+.price{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 4px}
+.price .new{font:700 52px/1 var(--serif);color:var(--plum-deep)}
+.price .old{font-size:20px;color:var(--mut);text-decoration:line-through;text-decoration-color:#C97A86}
+.timer{display:flex;align-items:center;gap:12px;margin:14px 0 16px;padding:12px 14px;border-radius:16px;background:linear-gradient(120deg,#3E1A2E,var(--plum));color:#fff}
+.timer .clock{font:700 28px/1 var(--sans);font-variant-numeric:tabular-nums;letter-spacing:.02em;color:var(--gold-l)}
+.timer .clock .c{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+.timer p{font-size:13.5px;line-height:1.35;color:rgba(255,255,255,.88)}
+.timer.over{background:rgba(110,47,81,.08);color:var(--tx)}.timer.over p{color:var(--mut)}
+.setbox{margin-top:16px;padding:20px 18px;border:1.5px solid var(--rose)}
+.setbox .st{font:700 26px/1.1 var(--serif);color:var(--plum-deep);margin:8px 0 2px}
+.setbox ul{margin:10px 0 14px;padding-left:2px}
+.setbox li{list-style:none;padding:4px 0;font-size:15.5px;display:flex;gap:8px}
+.setbox li::before{content:"✦";color:var(--gold)}
+.setbox .price .new{font-size:40px}
+.trust{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:16px 0 6px;font-size:13px;color:var(--mut)}
+.legal{text-align:center;font-size:12.5px;color:var(--mut);margin-top:12px;line-height:1.45}
+.legal a{color:var(--mut)}
+.tglink{display:block;text-align:center;margin-top:16px;font-size:14px;color:var(--mut)}
+
+/* липкая полоска покупки */
+.sticky{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:10px 14px max(10px,env(safe-area-inset-bottom));background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 -12px 30px -18px rgba(74,30,55,.5);transform:translateY(110%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.sticky.on{transform:none}
+.sticky .row{max-width:480px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.sticky .info{flex:none;line-height:1.15}
+.sticky .info b{display:block;font:700 22px/1 var(--serif);color:var(--plum-deep)}
+.sticky .info small{font-size:12px;color:#B05A68;font-weight:700;font-variant-numeric:tabular-nums}
+.sticky .btn{min-height:52px;font-size:16px;border-radius:16px}
+
+footer{text-align:center;font-size:12px;color:var(--mut);padding:24px 0 10px;line-height:1.5}
+footer a{color:var(--mut)}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="bgfx" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="sparks" aria-hidden="true" id="sparks"></div>
+<svg class="sprite" aria-hidden="true" width="0" height="0"><defs><linearGradient id="gShine" x1="0" y1="0" x2="1" y2="1" spreadMethod="repeat"><stop offset="0" stop-color="#9C7A42"/><stop offset=".3" stop-color="#D4B06C"/><stop offset=".45" stop-color="#FFF3CF"/><stop offset=".6" stop-color="#D4B06C"/><stop offset="1" stop-color="#9C7A42"/><animateTransform attributeName="gradientTransform" type="translate" values="-1 -1;1 1" dur="3.2s" repeatCount="indefinite"/></linearGradient></defs></svg>
+<svg class="sprite" aria-hidden="true" focusable="false" width="0" height="0"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#DCC092"/><stop offset=".5" stop-color="#B8956A"/><stop offset="1" stop-color="#8C6A44"/></linearGradient><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2E0B8"/><stop offset=".55" stop-color="#D6B684"/><stop offset="1" stop-color="#B08D5E"/></linearGradient><symbol id="lws" viewBox="0 0 200 200"><g id="lwsh"><path class="lf" d="M100 174Q80.3 172.6 70.7 190Q90.5 191.4 100 174ZM100 174Q91.9 159.3 75.1 160.4Q83.2 175.2 100 174ZM69.9 167.6Q53 158.6 37.8 170.2Q54.7 179.2 69.9 167.6ZM69.9 167.6Q68.6 151.4 53.3 145.9Q54.6 162 69.9 167.6ZM45 149.5Q33.7 135 15.7 139.2Q27.1 153.7 45 149.5ZM45 149.5Q50.2 134.7 38.9 123.8Q33.7 138.6 45 149.5ZM29.6 122.9Q25.3 105.7 7.9 102.3Q12.2 119.6 29.6 122.9ZM29.6 122.9Q40 111.9 34.3 97.9Q24 108.9 29.6 122.9ZM26.4 92.3Q29.4 75.5 15.3 65.7Q12.4 82.5 26.4 92.3ZM26.4 92.3Q39.8 86.7 40.3 72.2Q26.9 77.8 26.4 92.3ZM35.9 63Q45.1 49.4 36.6 35.4Q27.4 49 35.9 63ZM35.9 63Q49.8 63.3 55.9 50.8Q42 50.5 35.9 63ZM56.5 40.1Q69.8 31.8 67.8 16.2Q54.5 24.6 56.5 40.1ZM56.5 40.1Q68.6 45.8 78.8 37.3Q66.7 31.6 56.5 40.1ZM79.6 28.9Q89.4 32.1 95.9 24.2Q86.2 21 79.6 28.9Z"/><path class="ln" d="M117.9 171.8A74 74 0 0 1 79.6 28.9M95.9 176.2L77.2 186.5M96.5 172.1L80.6 163.4M65.4 168L44.9 169.6M67.6 164.6L57 150.6M40.9 148.1L22.2 141.5M44.2 145.9L40.3 129.5M26.6 120L12.7 106.9M30.3 119.4L33.3 103.4M24.9 88.6L17.8 71.6M28.4 89.5L37.2 76.6M36 59.1L36.4 41.5M38.7 61.3L51.5 53.5M58.1 36.8L65.3 21.5M59.6 39.7L73.9 37.9M81.9 28.2L92.3 25.2"/></g><use href="#lwsh" transform="matrix(-1 0 0 1 200 0)"/></symbol><symbol id="ls" viewBox="2 11.2 163.9 51"><path class="lf" d="M17.3 50.1Q30.6 50.1 37.3 38.6Q24 38.6 17.3 50.1ZM17.3 50.1Q23.8 60.2 35.7 59.6Q29.3 49.5 17.3 50.1ZM36.5 49Q48.9 48.2 54.5 37Q42 37.8 36.5 49ZM36.5 49Q43.1 58.1 54.3 56.8Q47.6 47.7 36.5 49ZM56.2 46.6Q67.8 45.1 72.2 34.4Q60.7 35.8 56.2 46.6ZM56.2 46.6Q62.9 54.7 73.3 52.8Q66.5 44.8 56.2 46.6ZM76.4 42.9Q87.1 40.9 90.7 30.6Q80 32.6 76.4 42.9ZM76.4 42.9Q83.1 50 92.6 47.7Q85.9 40.6 76.4 42.9ZM97.2 37.8Q107 35.4 109.8 25.8Q100 28.2 97.2 37.8ZM97.2 37.8Q103.8 44.1 112.4 41.5Q105.9 35.2 97.2 37.8ZM118.6 31.4Q127.4 28.8 129.5 19.8Q120.7 22.4 118.6 31.4ZM118.6 31.4Q124.9 36.9 132.7 34.1Q126.4 28.7 118.6 31.4ZM150 20Q158.6 21.3 163.9 14.4Q155.3 13.2 150 20Z"/><path class="ln" d="M4 50Q70 52 150 20M20.1 48.5L32.9 41.1M19.9 51.4L31.7 57.5M39 47.3L50.5 39.6M39 50.1L50.4 55.1M58.4 44.9L68.7 37.1M58.6 47.5L69.5 51.4M78.4 41.2L87.5 33.3M78.7 43.6L89.1 46.7M99 36.1L107 28.4M99.4 38.3L109.1 40.7M120.1 29.8L127.1 22.4M120.5 31.8L129.6 33.5M151.9 19.2L160.9 15.7"/></symbol><symbol id="lc" viewBox="-2.8 -13.1 204.8 86"><path class="lf" d="M182.9 2.9Q163.6 4.1 155.1 21.4Q174.3 20.2 182.9 2.9ZM182.9 2.9Q172.6 -11.1 155.4 -9.1Q165.6 4.9 182.9 2.9ZM158.5 6.1Q140.6 8.7 133.9 25.5Q151.9 22.9 158.5 6.1ZM158.5 6.1Q147.8 -6.2 131.9 -3.1Q142.5 9.2 158.5 6.1ZM133.7 11.3Q117.1 15 112.2 31.2Q128.7 27.5 133.7 11.3ZM133.7 11.3Q122.8 0.6 108.1 4.7Q119 15.4 133.7 11.3ZM108.4 18.7Q93.3 23.2 89.7 38.6Q104.8 34 108.4 18.7ZM108.4 18.7Q97.6 9.5 84.2 14.3Q95 23.5 108.4 18.7ZM82.6 28.2Q68.9 33.3 66.6 47.7Q80.2 42.6 82.6 28.2ZM82.6 28.2Q72.1 20.3 60 25.6Q70.5 33.4 82.6 28.2ZM56.3 39.8Q44.1 45.2 42.7 58.6Q55 53.1 56.3 39.8ZM56.3 39.8Q46.2 33.1 35.5 38.6Q45.6 45.2 56.3 39.8ZM18 60Q5.4 60 -0.8 70.9Q11.7 70.9 18 60Z"/><path class="ln" d="M200 2Q115 4 18 60M179 5.5L161.2 17.3M179 1.2L161.4 -6.5M155.1 8.8L139.3 21.2M154.8 4.8L137.7 -1.1M130.7 14.1L116.9 26.8M130.1 10.4L113.8 6.2M105.7 21.5L93.8 34.2M105 18.1L89.5 15.2M80.3 30.9L70.1 43.4M79.4 27.8L65 26.1M54.4 42.4L45.7 54.4M53.4 39.6L40.1 38.9M15.4 61.5L3.3 68.5"/></symbol><symbol id="lt" viewBox="-10.3 -2 126.8 164.7"><path class="lf" d="M101.6 18.1Q98.1 35 111 46.4Q114.5 29.5 101.6 18.1ZM101.6 18.1Q87.1 23.6 84.7 39Q99.2 33.4 101.6 18.1ZM95.6 42.2Q90.2 57.5 100.8 69.8Q106.2 54.5 95.6 42.2ZM95.6 42.2Q81.3 45.6 77.2 59.6Q91.4 56.2 95.6 42.2ZM86.4 65Q79.4 78.5 87.6 91.2Q94.6 77.8 86.4 65ZM86.4 65Q72.8 66.3 67.1 78.7Q80.7 77.4 86.4 65ZM74 86.5Q65.9 98 71.9 110.8Q80 99.3 74 86.5ZM74 86.5Q61.3 85.9 54.6 96.7Q67.3 97.2 74 86.5ZM58.6 106.6Q49.7 116.3 53.7 128.7Q62.5 119.1 58.6 106.6ZM58.6 106.6Q47 104.6 39.5 113.7Q51.1 115.7 58.6 106.6ZM40 125.4Q30.9 133.3 33.1 145.1Q42.2 137.3 40 125.4ZM40 125.4Q29.6 122.3 21.8 129.8Q32.1 132.9 40 125.4ZM8 150Q-3.3 150.6 -8.3 160.7Q3 160.1 8 150Z"/><path class="ln" d="M104 0Q96 92 8 150M102.9 22L109 40.2M99.2 21L88.4 34.4M96.3 46.1L99.6 63.7M93 44.6L81.2 55.7M86.5 68.7L87.3 85.5M83.7 66.9L71.4 75.7M73.7 89.9L72.4 105.5M71.3 87.9L58.8 94.4M57.9 109.7L54.8 123.9M55.9 107.6L43.7 112.1M39 128.2L34.6 140.7M37.4 126L25.8 128.8M5.7 151.5L-4.7 158.4"/></symbol></defs></svg>
+
+<main>
+  <!-- 1. Вход -->
+  <section class="scr" id="s-intro">
+    <div class="hero">
+      <span class="laurel l" aria-hidden="true" data-par="0.25"><span class="sway" style="display:block;width:100%;height:100%"><svg><use href="#lt"/></svg></span></span>
+      <span class="laurel r" aria-hidden="true" data-par="0.25"><span class="sway" style="display:block;width:100%;height:100%"><svg><use href="#lt"/></svg></span></span>
+      <div class="brand"><span class="mono sm"><b>ЮЛ</b></span>Юлия Лаври · @yulia.lavri</div>
+      <div class="hero-mid">
+        <div class="medal" aria-hidden="true"><b class="gold-text">₽</b></div>
+        <span class="tag">✦ БЕСПЛАТНЫЙ ТЕСТ</span>
+        <h1 id="t-hero">Какой у тебя <em>денежный</em> код?</h1>
+        <p class="lead" id="t-sub">6 вопросов — и ты увидишь, почему деньги приходят, но не остаются.</p>
+        <div class="chips"><span>⏱ 1 минута</span><span>🔐 Анонимно</span><span>🎁 Разбор сразу</span></div>
+      </div>
+      <div class="hero-bot">
+        <button class="btn btn--main pulse" data-go="start">Узнать свой код <span class="arr">→</span></button>
+        <p class="quote-line" id="t-quote">«10 лет я жила рядом с богатым мужем. Ушла — и стала богаче сама.»</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Вопросы -->
+  <section class="scr" id="s-q">
+    <div class="qtop"><button class="back" id="q-back" aria-label="Назад">←</button><div class="story" id="q-story"></div></div>
+    <div class="qnum" id="q-num">ВОПРОС 1 ИЗ 6</div>
+    <div class="qtext" id="q-text"></div>
+    <div class="opts" id="q-opts"></div>
+  </section>
+
+  <!-- 3. Промежуточный -->
+  <section class="scr" id="s-mid">
+    <div class="mid">
+      <div class="big-ico">✨</div>
+      <h2 id="mid-h">Уже видна <em>закономерность</em></h2>
+      <div class="bubble"><span class="mono sm"><b>ЮЛ</b></span><div class="msg" id="mid-text"></div></div>
+      <button class="btn btn--main pulse" data-go="continue">Ещё 3 вопроса <span class="arr">→</span></button>
+      <p class="small" style="margin-top:12px">Осталось 30 секунд</p>
+    </div>
+  </section>
+
+  <!-- 4. Анализ -->
+  <section class="scr" id="s-an">
+    <div class="an">
+      <div class="ring" aria-hidden="true"><span class="laurel"><svg><use href="#lws"/></svg></span></div>
+      <h2>Считаю <em>твой код</em>…</h2>
+      <ul class="steps card" id="an-steps">
+        <li><span class="dot">✓</span>Сравниваю с четырьмя денежными типами</li>
+        <li><span class="dot">✓</span>Ищу, где утекают деньги</li>
+        <li><span class="dot">✓</span>Ищу, что мешает им остаться</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5. Результат -->
+  <section class="scr" id="s-res">
+    <div class="res-head">
+      <div class="laurel" aria-hidden="true"><svg viewBox="0 0 250 94"><g transform="translate(0,6)"><use href="#ls" width="118" height="44" transform="matrix(-1 0 0 1 118 0)"/><use href="#ls" x="132" width="118" height="44"/></g></svg></div>
+      <span class="tag">ТВОЙ ДЕНЕЖНЫЙ КОД</span>
+      <h1><span class="gold-text" id="r-name"></span></h1>
+      <p class="res-quote" id="r-quote"></p>
+    </div>
+    <div class="gauge card rv">
+      <svg viewBox="0 0 300 165" aria-hidden="true">
+        <defs><linearGradient id="gArc" x1="0" x2="1"><stop offset="0" stop-color="#6E2F51"/><stop offset=".5" stop-color="#C9919E"/><stop offset="1" stop-color="#C9A45C"/></linearGradient></defs>
+        <path d="M25 150 A125 125 0 0 1 275 150" fill="none" stroke="rgba(110,47,81,.1)" stroke-width="18" stroke-linecap="round"/>
+        <path id="arc" d="M25 150 A125 125 0 0 1 275 150" fill="none" stroke="url(#gArc)" stroke-width="18" stroke-linecap="round" stroke-dasharray="393" stroke-dashoffset="393" style="transition:stroke-dashoffset 1.6s ease"/>
+        <g id="needle" style="transform:rotate(-90deg)"><path d="M150 150 L146 54 L150 40 L154 54 Z" fill="#4A1E37"/><circle cx="150" cy="150" r="12" fill="#4A1E37"/><circle cx="150" cy="150" r="5" fill="#E9CF94"/></g>
+      </svg>
+      <div class="lbls"><span>🔒 Заперты</span><span>Текут 🌊</span></div>
+      <p class="cap" id="r-cap"></p>
+    </div>
+
+    <div class="deck-h rv"><b>3 КАРТЫ ТВОЕГО КОДА</b><div class="dots" id="k-dots"><i class="on"></i><i></i><i></i></div></div>
+    <div class="deck rv" id="deck"></div>
+    <div class="deck-nav"><button class="btn btn--main" id="k-next">Следующая карта <span class="arr">→</span></button></div>
+  </section>
+
+  <!-- 6. Если ничего не менять + желание -->
+  <section class="scr" id="s-loss">
+    <span class="tag">ЕСЛИ НИЧЕГО НЕ МЕНЯТЬ</span>
+    <h2 style="margin:14px 0 18px">Что будет, если оставить <em>как есть</em></h2>
+    <div class="loss" id="loss"></div>
+    <p class="turn rv">Но может быть иначе.</p>
+    <div class="bubble rv"><span class="mono sm"><b>ЮЛ</b></span><div class="msg" id="w-intro"></div></div>
+    <div class="wishes rv" id="wishes"></div>
+  </section>
+
+  <!-- 7. Новая версия -->
+  <section class="scr" id="s-nv">
+    <span class="tag" id="nv-tag"></span>
+    <h2 id="nv-wish" style="margin:14px 0 10px"></h2>
+    <p class="lead" id="nv-hook"></p>
+    <p class="small rv" style="margin-top:18px;font-weight:700;color:var(--plum)">Нажми на каждую — посмотри, как станет ↓</p>
+    <div class="ba" id="ba"></div>
+    <div class="always card rv"><h4>Я хочу, чтобы так было всегда</h4><ul id="nv-always"></ul></div>
+    <button class="btn btn--main pulse rv" data-go="offer">Как этого добиться за 14 дней <span class="arr">→</span></button>
+  </section>
+
+  <!-- 8. Предложение -->
+  <section class="scr" id="s-offer">
+    <div class="offer-h"><span class="tag" id="o-type"></span><h2 style="margin-top:14px" id="o-title">Денежный код: <em>14 дней</em></h2></div>
+    <div class="tl rv" id="o-tl"></div>
+    <div class="inside rv" id="o-inside"></div>
+
+    <div class="pricebox card rv" id="offer">
+      <span class="seal">СПЕЦЦЕНА</span>
+      <div class="plabel" id="o-one">1 ПРАКТИКУМ</div>
+      <div class="price"><span class="new" id="o-price">990 ₽</span><span class="old" id="o-old">1 990 ₽</span></div>
+      <div class="timer" id="o-timer"><div class="clock" id="o-left">30<span class="c">:</span>00</div><p id="o-tnote">Цена держится только для тебя. Потом — <span id="o-full">1 990 ₽</span></p></div>
+      <a class="btn btn--main pulse" id="o-pay" href="#">Начать за 990 ₽ <span class="arr">→</span></a>
+      <div class="trust"><span>✓ Один платёж</span><span>✓ Без подписки</span><span>✓ Доступ сразу</span></div>
+    </div>
+
+    <div class="setbox card rv" id="o-set" hidden>
+      <span class="tag">🎁 ВЫГОДНЕЕ</span>
+      <div class="st">3 практикума</div>
+      <div class="price"><span class="new" id="s-price">1 990 ₽</span><span class="old" id="s-old">5 970 ₽</span></div>
+      <p class="small" id="s-txt"></p>
+      <ul id="s-list"></ul>
+      <a class="btn btn--gold" id="o-pay3" href="#">Взять 3 практикума за 1 990 ₽ <span class="arr">→</span></a>
+    </div>
+
+    <p class="legal" id="o-disc"></p>
+    <p class="legal"><a href="/oferta.html" target="_blank" rel="noopener">Оферта</a> · <a href="/refund.html" target="_blank" rel="noopener">Возврат</a> · <a href="/privacy.html" target="_blank" rel="noopener">Персональные данные</a></p>
+    <a class="tglink" id="o-tg" href="#" target="_blank" rel="noopener">Пока просто забрать результат в Telegram</a>
+    <button class="link" data-go="restart">Пройти тест заново</button>
+  </section>
+
+  <footer>Материалы носят информационный характер и не являются индивидуальной консультацией.<br><a href="/oferta.html" target="_blank" rel="noopener">Оферта</a> · <a href="/privacy.html" target="_blank" rel="noopener">Политика конфиденциальности</a><br>© Юлия Лаври</footer>
+</main>
+
+<div class="sticky" id="sticky"><div class="row"><div class="info"><b id="st-price">990 ₽</b><small id="st-left">⏳ 30:00</small></div><a class="btn btn--main" id="st-pay" href="#">Начать практикум →</a></div></div>
+<div class="toast" id="toast"><span class="mono sm"><b>ЮЛ</b></span><p id="toast-t"></p></div>
+
+<script>
+var PREVIEW = true; /* пока страница — черновик для автора: визиты и клики не в статистику */
+var CONFIG = {TG_BOT_URL:"https://t.me/yulia_lavri_bot"};
+var Q = [
+  {t:"Тебе неожиданно пришли 20 000 ₽. Первая мысль?", a:[["Кому что нужно?","u"],["Наверное, ошибка","s"],["Срочно спрятать","t"],["Вот бы так всегда","z"]]},
+  {t:"Нужно назвать цену за свою работу или попросить прибавку. Ты…", a:[["Сделаю бесплатно","u"],["Назову поменьше","s"],["Отложу разговор","t"],["Жду, сами предложат","z"]]},
+  {t:"Сколько ты потратила на себя в прошлом месяце?", a:[["Почти ничего","u"],["Знаю до рубля","s"],["Лучше не смотреть","t"],["Бюджет ведёт он","z"]]},
+  {t:"Мужчина хочет купить тебе что-то дорогое. Ты…", a:[["Лучше на семью","u"],["Ой, не надо","s"],["А что взамен?","t"],["Наконец-то!","z"]]},
+  {t:"В магазине очень нравится вещь, но она дорогая. Ты…", a:[["Себе — потом","u"],["Это не для меня","s"],["Куплю и пожалею","t"],["Намекну ему","z"]]},
+  {t:"Какая фраза звучит у тебя в голове чаще всего?", a:[["«Сначала все, потом я»","u"],["«Много мне не надо»","s"],["«А вдруг не хватит»","t"],["«Кто-то позаботится»","z"]]}
+];
+
+var MID = {
+  u:"Похоже, деньги у тебя часто уходят на других раньше, чем на тебя. Ещё 3 вопроса — посмотрим, как это проявляется с мужчиной и с покупками.",
+  s:"Похоже, считать деньги ты умеешь, но себе как будто не разрешаешь много. Ещё 3 вопроса — и станет ясно, где это сильнее всего.",
+  t:"Похоже, деньги для тебя больше про напряжение, чем про цифры. Ещё 3 вопроса — и картина сложится.",
+  z:"Похоже, в денежных вопросах ты чаще ждёшь, чем решаешь сама. Ещё 3 вопроса — и увидим, насколько.",
+  mix:"Твои ответы разные — значит, в тебе смешаны несколько кодов. Последние 3 вопроса покажут, какой из них главный."
+};
+
+var T = {
+  u:{name:"Удобная", quote:"«Сначала все, потом я»",
+     text:"Ты умеешь заботиться так, что рядом с тобой всем тепло. Всем, кроме тебя. Деньги у тебя есть, но они как вода: утекают в чужие нужды, а тебе остаётся «потом». Я сама так жила десять лет: подарки всем, себе — что останется.",
+     b:[["ГЛАВНАЯ ПРИЧИНА","В твоём списке ты стоишь последней. Дело не в том, сколько ты зарабатываешь, а в том, что «себе» всегда переносится на «потом»."],
+        ["ЧТО ПОДДЕРЖИВАЕТ","Каждое «спасибо, ты лучшая» закрепляет привычку: быть нужной кажется важнее, чем иметь своё."],
+        ["ЦЕНА","Деньги приходят и уходят в чужие нужды. Годы проходят — всё отдано, а своего так и не появилось."],
+        ["РИСК","Близкие привыкают, что ты уступишь и справишься. Чем дольше так, тем сложнее сказать: «Теперь моя очередь»."]],
+     step:"Потрать на себя небольшую сумму — 300 или 500 ₽ — на вещь, которая нужна только тебе. Не «полезную для дома». Только твою. И заметь, что почувствуешь.",
+     pairs:[["Подарки всем, себе — что останется","Сначала откладываешь себе, потом — остальным"],
+            ["Вина за каждую трату на себя","Покупаешь своё спокойно, без объяснений"],
+            ["«Да», когда хочется сказать «нет»","Помогаешь, когда сама этого хочешь"],
+            ["Деньги утекают, как вода","Видишь, куда идёт каждый рубль, и часть остаётся твоей"]]},
+  s:{name:"Скромная", quote:"«Мне много не надо»",
+     text:"Ты умная, аккуратная с деньгами и честно считаешь каждый рубль. Но твой главный тормоз — фраза «мне много не надо». Рядом с богатыми людьми я увидела одно: они не скромничают с ценой. Они называют её спокойно.",
+     b:[["ГЛАВНАЯ ПРИЧИНА","Ты занижаешь свою цену заранее — раньше, чем кто-то успел её оценить."],
+        ["ЧТО ПОДДЕРЖИВАЕТ","Страх показаться нескромной. Отказ от прибавки и подарка кажется вежливостью, а не потерей."],
+        ["ЦЕНА","Каждый раз, когда ты называешь цену поменьше, разница остаётся у кого-то другого. За годы набегает заметная сумма."],
+        ["РИСК","Люди привыкают к твоей низкой цене. Поднять её потом труднее, чем сразу назвать нормальную."]],
+     step:"Вспомни, за что тебе в последний раз заплатили или сказали «спасибо». Напиши себе, сколько это на самом деле стоило, — и прибавь ещё 20%. Просто запиши цифру и посмотри на неё.",
+     pairs:[["Называешь цену поменьше","Называешь цену спокойно — и молчишь после"],
+            ["«Ой, не надо» в ответ на подарок","«Спасибо» — и улыбка"],
+            ["Ждёшь, пока заметят и предложат","Сама начинаешь разговор о деньгах"],
+            ["Экономишь в первую очередь на себе","Знаешь, что тебе можно, — без оправданий"]]},
+  t:{name:"Тревожная", quote:"«А вдруг не хватит»",
+     text:"Деньги у тебя вызывают напряжение: их всегда как будто не хватает, даже когда они есть. Ты то прячешь «на чёрный день», то срываешься и покупаешь, а потом жалеешь. Я тоже годами не знала, сколько у нас есть, и это было самым дорогим моим незнанием.",
+     b:[["ГЛАВНАЯ ПРИЧИНА","Деньги для тебя связаны со страхом, а не с цифрами. Поэтому в цифры не хочется смотреть."],
+        ["ЧТО ПОДДЕРЖИВАЕТ","Незнание кажется спокойнее. Но тревога растёт как раз там, где нет ясности."],
+        ["ЦЕНА","Качели: то копишь на чёрный день, то срываешься на покупку и жалеешь. Деньги не копятся и не радуют."],
+        ["РИСК","Денежные решения принимаются на эмоциях, а не по фактам. Самые дорогие ошибки делаются из страха."]],
+     step:"Открой банк и посмотри одну цифру — сколько ушло за прошлую неделю. Без выводов и без стыда. Только цифра. Страх уменьшается, когда у него появляется размер.",
+     pairs:[["Не открываешь банк, чтобы не расстраиваться","Раз в неделю спокойно смотришь цифры"],
+            ["Покупаешь на нервах и жалеешь","Тратишь на то, что выбрала заранее"],
+            ["«А вдруг не хватит» по кругу","Знаешь свой запас — и спишь спокойно"],
+            ["Деньги — это напряжение","Деньги — понятный инструмент"]]},
+  z:{name:"Ждущая", quote:"«Кто-то позаботится»",
+     text:"Ты веришь, что о тебе позаботятся: мужчина, обстоятельства, «как-нибудь». И иногда так и бывает. Но пока твои деньги зависят от чужого настроения, ты не выбираешь — ты ждёшь. Я десять лет жила именно так: всё было, кроме своего.",
+     b:[["ГЛАВНАЯ ПРИЧИНА","Твои деньги зависят от чужого решения — мужчины, начальника, обстоятельств."],
+        ["ЧТО ПОДДЕРЖИВАЕТ","Так бывает удобно: не нужно решать и рисковать. И иногда о тебе правда заботятся."],
+        ["ЦЕНА","Ты не выбираешь — ты ждёшь. Всё есть, кроме своего. Меня не содержали — меня держали."],
+        ["РИСК","Когда меняется чужое настроение, вместе с ним меняется вся твоя жизнь. А опоры своей нет."]],
+     step:"Заведи отдельный счёт или копилку только на себя и положи туда любую сумму, хоть 100 ₽. Это не про сумму. Это первые деньги, о которых не нужно никого спрашивать.",
+     pairs:[["Намекаешь и ждёшь","Покупаешь сама, когда хочешь"],
+            ["Бюджет ведёт он","Есть свой счёт, о котором не нужно спрашивать"],
+            ["«Как-нибудь устроится»","Есть свой план на год"],
+            ["Подарок — как награда","Подарок — приятность, а не зарплата"]]}
+};
+var ORDER = ["z","u","s","t"]; // старшинство при ничьей, если тип из 6-го ответа не в ничьей
+var NAMES_ROW = ["u","s","t","z"];
+var KT = {"types": {"u": {"name": "Удобная", "card1": {"title": "Сначала все, потом я", "text": "Ты думаешь о деньгах так, будто они общие: на детей, на дом, на маму, на подарки. Себя ты ставишь в конец списка, а до конца списка деньги обычно не доходят. И ты привыкла считать это нормой."}, "card2": {"title": "Ты умеешь заботиться", "text": "Рядом с тобой людям тепло и надёжно — это редкое качество. Ты умеешь распределять, планировать и держать на себе много. Если хотя бы часть этой заботы развернуть к себе, денег у тебя станет заметно больше."}, "card3": {"title": "Ты отдаёшь раньше, чем оставляешь себе", "text": "Деньги утекают не потому, что их мало, а потому, что у них нет твоего места. Всё, что приходит, сразу становится чьим-то. А «себе потом» так и не наступает.", "step": "Деньги остаются у той, кто первой платит себе."}}, "s": {"name": "Скромная", "card1": {"title": "Мне много не надо", "text": "Ты аккуратна с деньгами и честно считаешь каждый рубль. Но заранее называешь цену поменьше, отказываешься от лишнего и молчишь о прибавке, потому что «неудобно». Ты думаешь, что скромность — это надёжно."}, "card2": {"title": "Ты умеешь обходиться малым", "text": "Ты не тонешь в долгах и не теряешь голову от покупок. У тебя есть дисциплина, которой многим не хватает. Это хороший фундамент — на нём можно строить гораздо больше, чем ты себе разрешаешь."}, "card3": {"title": "Ты заранее снижаешь себе цену", "text": "Тебе платят ровно столько, сколько ты разрешаешь. Ты уступаешь ещё до того, как с тобой начали торговаться. И деньги проходят мимо — к тем, кто называет цену спокойно.", "step": "Твоя цена начинается с того, что ты произносишь её вслух."}}, "t": {"name": "Тревожная", "card1": {"title": "А вдруг не хватит", "text": "Деньги для тебя — источник напряжения. Их будто всегда мало, даже когда они есть. Ты то откладываешь «на чёрный день», то срываешься и покупаешь, а в выписку лучше не смотреть — так спокойнее."}, "card2": {"title": "Ты чувствуешь риск", "text": "Ты не беспечна, ты думаешь наперёд и умеешь беречь. Твоя осторожность защищала тебя не раз. Ей просто нужны цифры вместо страха — тогда она становится твоей силой."}, "card3": {"title": "Ты не знаешь своих цифр", "text": "Страх держится на неизвестности. Пока ты не знаешь, сколько уходит и сколько тебе нужно на жизнь, любая сумма кажется маленькой. И деньги утекают незаметно — как раз туда, куда ты не смотришь.", "step": "Страх уменьшается, когда у него появляется размер."}}, "z": {"name": "Ждущая", "card1": {"title": "Кто-то позаботится", "text": "Ты веришь, что о тебе позаботятся: мужчина, обстоятельства, «как-нибудь само». Иногда так и бывает. Но пока твои деньги зависят от чужого настроения, ты не выбираешь — ты ждёшь."}, "card2": {"title": "Ты умеешь доверять", "text": "В тебе нет жадности и постоянного контроля, ты умеешь принимать — а многие женщины этого не умеют совсем. Это мягкая сила. Ей не хватает только одного — опоры, которая принадлежит тебе."}, "card3": {"title": "У тебя нет своих денег", "text": "Можно жить в достатке и не иметь ни рубля, о котором не нужно отчитываться. Я так прожила десять лет: всё было, кроме своего. Деньги приходят к той, у кого есть куда им прийти.", "step": "Свобода начинается с первого рубля, о котором никого не нужно спрашивать."}}}, "chat": {"intro": "Теперь я хочу понять, ради чего тебе на самом деле нужны деньги 🤍 Выбери, что ближе — честно, для себя."}, "wishes": [{"id": "zarplata", "label": "Хочу перестать жить от зарплаты до зарплаты", "landing": {"hook": "Представь: до зарплаты ещё неделя, а у тебя спокойно. Ты не пересчитываешь остаток в магазине, не откладываешь нужное «до двадцатого» и не занимаешь до конца месяца. Деньги просто есть — и ты знаешь, откуда и на сколько.", "always": ["Знать, сколько у меня денег, без страха открыть банк", "Не занимать до зарплаты", "Иметь запас хотя бы на месяц вперёд", "Тратить спокойно, а не «последнее»"], "bridge": "Дело почти никогда не в размере зарплаты. Деньги заканчиваются раньше месяца, когда у них нет порядка: всё в одном кошельке, без своего места и без знания, куда оно уходит. Практикум «Денежный код: 14 дней» начинается с того, что ты увидишь свои реальные траты по выписке, отделишь своё и посчитаешь, сколько на самом деле стоит месяц твоей жизни. По одному короткому заданию в день, под твой тип.", "imagine": "Представь следующий месяц. Ты знаешь свою цифру расходов, у тебя есть отдельный счёт «Моё», и неделя до зарплаты — это просто неделя, а не выживание."}}, {"id": "svoi", "label": "Хочу свои деньги, о которых не нужно отчитываться", "landing": {"hook": "Представь: ты покупаешь себе то, что хочешь, и никому не объясняешь, сколько это стоило. Не прячешь чек, не придумываешь «это со скидкой». Это твои деньги — и решение тоже твоё.", "always": ["Иметь счёт, о котором знаю только я", "Не спрашивать разрешения на свои покупки", "Не оправдываться за каждую трату", "Чувствовать опору, а не зависимость"], "bridge": "Я десять лет жила рядом с очень богатым мужчиной — и у меня не было ни одного своего рубля. Свои деньги не появляются от того, что общих стало больше. Они появляются, когда ты отдельно и регулярно оставляешь их себе. В практикуме «Денежный код: 14 дней» ты заведёшь свой счёт «Моё», положишь туда первые деньги и разберёшь, чьи слова о деньгах до сих пор звучат у тебя в голове.", "imagine": "Представь следующий месяц. У тебя есть деньги, о которых никто не спрашивает. Сумма может быть небольшой — но это первое за долгое время, что принадлежит только тебе."}}, {"id": "nezavisimost", "label": "Хочу перестать зависеть от мужчины", "landing": {"hook": "Представь: ты остаёшься рядом с мужчиной, потому что хочешь, а не потому, что без него не на что жить. Спор не заканчивается мыслью «а куда я пойду». Ты выбираешь — и это слышно в твоём голосе.", "always": ["Знать, что я справлюсь сама", "Говорить «нет» без страха остаться ни с чем", "Понимать, сколько месяцев я продержусь одна", "Быть рядом по любви, а не по необходимости"], "bridge": "Зависимость редко держится на деньгах самих по себе. Она держится на незнании: сколько тебе нужно, что у тебя есть и что ты умеешь продать. Когда я уходила с одной сумкой, мне было страшно именно поэтому. В практикуме «Денежный код: 14 дней» ты посчитаешь, сколько стоит месяц твоей жизни и на сколько месяцев тебе хватит, заведёшь свои деньги и получишь готовые фразы для разговора о деньгах с мужчиной.", "imagine": "Представь следующий месяц. Ты знаешь свою цифру и свой запас. Ты всё ещё можешь выбрать остаться — но теперь это действительно выбор."}}, {"id": "kopit", "label": "Хочу начать копить и не срываться", "landing": {"hook": "Представь: у тебя есть отложенные деньги, и ты не трогаешь их при первой же трудности. Не потому, что запрещаешь себе, а потому, что знаешь, на что они и когда понадобятся.", "always": ["Откладывать каждый месяц, а не «что останется»", "Не тратить накопленное на первую же мелочь", "Видеть, как сумма растёт", "Иметь цель, ради которой коплю"], "bridge": "Копить не получается не из-за слабой воли. Откладывают «что останется», а остаётся ничего — или копят без цели, и деньги уходят на первое же «надо». В практикуме «Денежный код: 14 дней» ты заведёшь отдельный счёт, положишь туда первые деньги в начале месяца, а не в конце, и составишь свои денежные правила и план на следующий месяц.", "imagine": "Представь следующий месяц. В первый день ты откладываешь своё, и к концу месяца сумма на счёте не уменьшилась. Небольшая — но твоя и растущая."}}, {"id": "cena", "label": "Хочу называть свою цену и не стесняться", "landing": {"hook": "Представь: тебя спрашивают «сколько стоит?», и ты спокойно называешь цифру. Без «ну, сколько не жалко», без скидки заранее и без объяснений на полчаса. И тебе платят.", "always": ["Называть цену спокойно и без извинений", "Просить прибавку и получать её", "Не работать «за спасибо»", "Знать, сколько на самом деле стоит то, что я умею"], "bridge": "Женщины занижают себе цену не из-за отсутствия опыта, а из-за чужих фраз в голове: «скромнее надо», «кто ты такая». Рядом с богатыми людьми я видела одно: они не скромничают с ценой. В практикуме «Денежный код: 14 дней» ты найдёшь эти фразы и заменишь одну из них своей, напишешь свой прайс — честную цену того, что умеешь, — и получишь готовые слова для разговора о деньгах на работе.", "imagine": "Представь следующий месяц. У тебя записан свой прайс, и ты хотя бы раз назвала цену, не снижая её заранее. Это меняет больше, чем кажется."}}, {"id": "sebe", "label": "Хочу тратить на себя без чувства вины", "landing": {"hook": "Представь: ты покупаешь себе хорошую вещь — и не прячешь пакет, не говоришь «это было на распродаже», не мучаешься вечером. Тебе просто приятно. И это нормально.", "always": ["Покупать себе без объяснений", "Не откладывать себя «на потом»", "Не чувствовать, что я у кого-то отняла", "Радоваться покупке, а не жалеть о ней"], "bridge": "Вина за траты на себя — не про деньги. Это привычка ставить себя последней, которую нам передали вместе со словами «сначала семья». Поэтому даже когда деньги есть, тратить на себя страшно. В практикуме «Денежный код: 14 дней» ты разберёшь, откуда эта вина, отделишь свои деньги от общих и в один из дней потратишь их на себя — спокойно, без объяснений.", "imagine": "Представь следующий месяц. У тебя есть сумма, которая предназначена только тебе, и ты тратишь её с удовольствием. Никто от этого не пострадал — а тебе стало легче."}}], "offer": {"title": "Денежный код: практикум 14 дней", "bullets": ["14 коротких заданий в Telegram — по одному в день, 10–15 минут", "Подсказки под твой денежный тип", "Свой счёт «Моё» и первые деньги на нём", "Сколько стоит месяц твоей жизни и на сколько тебе хватит запаса", "Готовые фразы для разговора о деньгах — с мужчиной, на работе, с близкими", "Свой прайс и 5 своих денежных правил на следующий месяц"], "note": "Пропустила день — ничего не сгорает, продолжаешь с того места, где остановилась. Доступ остаётся у тебя.", "disclaimer": "Практикум носит информационный характер. Это не консультация, не финансовый совет и не терапия."}};
+
+
+/* короткие реплики Юлии после ответа — черновик, финальные пишет контент-чат (п. 86) */
+var REACT = ["Честно — это уже половина 🤍","Интересно… запоминаю","Вот это важно ✨","Похоже, картина складывается","Почти готово 🤍","Всё, считаю твой код…"];
+/* место на шкале «заперты ←→ текут» и подпись — черновик до текстов контент-чата */
+var GAUGE = {u:{p:.28,c:"Деньги приходят — и сразу уходят <b>на других</b>. Тебе почти ничего не остаётся."},
+             s:{p:.38,c:"Деньги есть, но ты <b>держишь их на замке</b> — и себе почти ничего не разрешаешь."},
+             t:{p:.33,c:"Деньги идут рывками: то копишь от страха, то <b>срываешься</b>. Спокойного потока нет."},
+             z:{p:.18,c:"Твои деньги <b>в чужих руках</b>. Поток откроется, когда появится своё."}};
+
+/* ===== помощники ===== */
+var answers=[],cur=0,busy=false,result=null,curWish=null,timerId=null,kIdx=0;
+var $=function(id){return document.getElementById(id)};
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+var _sid;function sid(){if(_sid)return _sid;var v=store("ylsid");if(!v){v=(Date.now().toString(36)+Math.random().toString(36).slice(2,12)).replace(/[^a-z0-9]/gi,"").slice(0,24);store("ylsid",v)}return _sid=v}
+function src(){if(PREVIEW)return "selftest";var p=new URLSearchParams(location.search);if(p.get("yltest")==="1")store("yltest","1");if(p.get("yltest")==="0")store("yltest","0");if(store("yltest")==="1")return "selftest";var u=p.get("utm_source")||p.get("u")||"";return u.replace(/[^A-Za-z0-9_.-]/g,"").slice(0,48)||"direct"}
+function cp(){var v=(new URLSearchParams(location.search).get("cp")||"").toLowerCase();if(/^[0-9a-f-]{36}$/.test(v)){store("yl_cp",v);return v}v=store("yl_cp")||"";return /^[0-9a-f-]{36}$/.test(v)?v:""}
+function track(e){try{window.ylTrack&&window.ylTrack(e)}catch(x){}}
+function rub(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" ₽"}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+
+function show(id){
+  var next=$(id),prev=document.querySelector(".scr.on");
+  if(prev===next)return;
+  var go=function(){if(prev)prev.classList.remove("on","show");next.classList.add("on");window.scrollTo(0,0);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){next.classList.add("show");reveal()})})};
+  if(prev&&!reduce){prev.classList.remove("show");setTimeout(go,300)}else go();
+  $("sticky").classList.remove("on");
+}
+/* появление блоков при прокрутке */
+var io=("IntersectionObserver" in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.15}):null;
+function reveal(){document.querySelectorAll(".scr.on .rv:not(.in)").forEach(function(el){io?io.observe(el):el.classList.add("in")})}
+/* золотые искры */
+(function(){var b=$("sparks");if(reduce)return;for(var i=0;i<14;i++){var s=document.createElement("b");s.style.left=(Math.random()*100)+"%";s.style.top=(60+Math.random()*45)+"%";s.style.animationDelay=(-Math.random()*7)+"s";s.style.animationDuration=(6+Math.random()*5)+"s";b.appendChild(s)}})();
+/* ветки двигаются при прокрутке */
+window.addEventListener("scroll",function(){var y=window.scrollY;document.querySelectorAll("[data-par]").forEach(function(el){el.style.translate="0 "+(y*parseFloat(el.dataset.par))+"px"})},{passive:true});
+function toast(t){var el=$("toast");$("toast-t").textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove("on")},1300)}
+function vibr(){try{navigator.vibrate&&navigator.vibrate(12)}catch(e){}}
+
+/* ===== вопросы ===== */
+function renderQ(){
+  var q=Q[cur];
+  var st=$("q-story");if(!st.children.length)for(var i=0;i<Q.length;i++)st.appendChild(document.createElement("i"));
+  [].forEach.call(st.children,function(el,i){el.style.setProperty("--w",i<cur?"100%":"0%")});
+  $("q-num").textContent="ВОПРОС "+(cur+1)+" ИЗ "+Q.length;
+  $("q-text").textContent=q.t;
+  var box=$("q-opts");box.innerHTML="";
+  q.a.forEach(function(a,i){var b=document.createElement("button");b.type="button";b.className="opt";b.innerHTML="<b>"+"АБВГ"[i]+"</b><span></span>";b.lastChild.textContent=a[0];b.onclick=function(){pick(a[1],b)};box.appendChild(b)});
+  busy=false;
+}
+function pick(k,btn){
+  if(busy)return;busy=true;vibr();
+  btn.classList.add("picked");[].forEach.call($("q-opts").children,function(o){if(o!==btn)o.classList.add("dim")});
+  answers[cur]=k;$("q-story").children[cur].style.setProperty("--w","100%");
+  toast(REACT[cur]||"🤍");
+  setTimeout(function(){cur++;if(cur===3)return midScreen();if(cur===Q.length)return analyze();fadeQ()},reduce?150:900);
+}
+function fadeQ(){var s=$("s-q");if(reduce){renderQ();return}s.classList.remove("show");setTimeout(function(){renderQ();window.scrollTo(0,0);s.classList.add("show")},280)}
+function count(l){var c={u:0,s:0,t:0,z:0};l.forEach(function(k){c[k]++});return c}
+function midScreen(){var c=count(answers.slice(0,3)),best=null,max=0;["u","s","t","z"].forEach(function(k){if(c[k]>max){max=c[k];best=k}});$("mid-text").textContent=max>=2?MID[best]:MID.mix;show("s-mid")}
+function winner(){var c=count(answers),max=Math.max(c.u,c.s,c.t,c.z),tied=Object.keys(c).filter(function(k){return c[k]===max});if(tied.length===1)return tied[0];var last=answers[5];if(tied.indexOf(last)>-1)return last;for(var i=0;i<ORDER.length;i++)if(tied.indexOf(ORDER[i])>-1)return ORDER[i]}
+function analyze(){
+  result=winner();store("kod_result",result);
+  var lis=$("an-steps").children;[].forEach.call(lis,function(l){l.classList.remove("done")});
+  show("s-an");var d=reduce?[300,600,900,1200]:[1000,2000,3000,3900];
+  [0,1,2].forEach(function(i){setTimeout(function(){lis[i].classList.add("done");vibr()},d[i])});
+  setTimeout(renderResult,d[3]);
+}
+
+/* ===== результат: шкала + колода ===== */
+function renderResult(){
+  var r=T[result],kt=KT.types[result],g=GAUGE[result]||{p:.3,c:""};
+  $("r-name").textContent=r.name;$("r-quote").textContent=r.quote;$("r-cap").innerHTML=g.c;
+  $("needle").style.transform="rotate(-90deg)";$("arc").style.strokeDashoffset="393";
+  setTimeout(function(){$("needle").style.transform="rotate("+(-90+g.p*180)+"deg)";$("arc").style.strokeDashoffset=String(393*(1-g.p))},700);
+  var deck=$("deck");deck.innerHTML="";kIdx=0;
+  [["🧭",kt.card1],["⚡",kt.card2],["🔐",kt.card3]].forEach(function(x,i){
+    var c=document.createElement("div");c.className="kc";
+    c.innerHTML='<div class="face front"><div class="ico">'+x[0]+'</div><div class="kn">КАРТА '+(i+1)+' ИЗ 3</div><h3></h3><p></p>'+(x[1].step?'<div class="step"></div>':'')+'</div>'
+      +(i===2?'<div class="face back-face"><div class="lock">🔒</div><h3>Самое важное</h3><p>Здесь — что именно не даёт деньгам остаться у тебя.</p><button class="btn btn--gold" type="button">Открыть третью карту</button></div>':'');
+    c.querySelector("h3").textContent=x[1].title;c.querySelector("p").textContent=x[1].text;
+    if(x[1].step)c.querySelector(".step").textContent="Шаг на сегодня: "+x[1].step;
+    if(i===2){c.classList.add("locked");c.querySelector(".back-face button").onclick=function(e){e.stopPropagation();c.classList.remove("locked");vibr();track("card3");layoutDeck()}}
+    tilt(c);deck.appendChild(c);
+  });
+  layoutDeck();show("s-res");
+}
+function layoutDeck(){
+  var cs=$("deck").children;
+  [].forEach.call(cs,function(c,i){c.classList.remove("cur","next1","next2","gone");if(i<kIdx)c.classList.add("gone");else if(i===kIdx)c.classList.add("cur");else if(i===kIdx+1)c.classList.add("next1");else c.classList.add("next2")});
+  [].forEach.call($("k-dots").children,function(d,i){d.classList.toggle("on",i===kIdx)});
+  var lk=cs[2]&&cs[2].classList.contains("locked");
+  $("k-next").innerHTML=kIdx<2?'Следующая карта <span class="arr">→</span>':(lk?'Открыть третью карту 🔓':'Что будет дальше <span class="arr">→</span>');
+  var h=0;[].forEach.call(cs,function(c){var f=c.querySelector(".front");f.style.height="auto";h=Math.max(h,f.scrollHeight);f.style.height=""});$("deck").style.height=(Math.max(h,300)+6)+"px";
+}
+$("k-next").onclick=function(){
+  var cs=$("deck").children;vibr();
+  if(kIdx<2){kIdx++;layoutDeck();return}
+  if(cs[2].classList.contains("locked")){cs[2].classList.remove("locked");track("card3");layoutDeck();return}
+  renderLoss();
+};
+/* наклон карты за пальцем / мышью */
+function tilt(el){if(reduce)return;el.addEventListener("pointermove",function(e){if(!el.classList.contains("cur")||el.classList.contains("locked"))return;var r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.transform="rotateY("+(x*10)+"deg) rotateX("+(-y*10)+"deg) translateZ(10px)"});el.addEventListener("pointerleave",function(){el.style.transform=""})}
+
+/* ===== если ничего не менять → желание ===== */
+function renderLoss(){
+  var r=T[result],pick=function(h){for(var i=0;i<r.b.length;i++)if(r.b[i][0]===h)return r.b[i][1];return ""};
+  var items=[["⏳","ЦЕНА",pick("ЦЕНА")],["⚠️","РИСК",pick("РИСК")]];
+  $("loss").innerHTML=items.filter(function(x){return x[2]}).map(function(x){return '<div class="it card rv"><span class="ic">'+x[0]+'</span><div><b>'+x[1]+'</b><p>'+esc(x[2])+'</p></div></div>'}).join("");
+  $("w-intro").textContent=KT.chat.intro;
+  var w=$("wishes");w.innerHTML="";
+  KT.wishes.forEach(function(x){var b=document.createElement("button");b.type="button";b.className="wish";b.textContent=x.label;b.onclick=function(){vibr();track("wish");renderNew(x)};w.appendChild(b)});
+  show("s-loss");
+}
+
+/* ===== новая версия: было → стало ===== */
+function renderNew(wish){
+  curWish=wish;var r=T[result],L=wish.landing;
+  $("nv-tag").textContent="ТВОЙ КОД · «"+r.name.toUpperCase()+"»";
+  $("nv-wish").textContent=wish.label;$("nv-hook").textContent=L.hook;
+  $("ba").innerHTML=r.pairs.map(function(p){return '<div class="flip rv"><div class="in"><div class="sd was"><small>СЕЙЧАС</small><p>'+esc(p[0])+'</p></div><div class="sd now"><small>✦ ЧЕРЕЗ 14 ДНЕЙ</small><p>'+esc(p[1])+'</p></div></div></div>'}).join("");
+  [].forEach.call($("ba").children,function(f,i){f.onclick=function(){f.classList.toggle("on");vibr()};if(!reduce)setTimeout(function(){f.classList.add("on")},1600+i*650)});
+  var ul=$("nv-always");ul.innerHTML="";(L.always||[]).forEach(function(t){var li=document.createElement("li");li.textContent=t;ul.appendChild(li)});
+  store("yl_offer_kodnew",JSON.stringify({r:result,w:wish.id,t:Date.now()}));
+  show("s-nv");
+}
+
+/* ===== предложение: ценность → цена → таймер (с показа цены, п. 86) ===== */
+function renderOffer(){
+  var r=T[result],wish=curWish;
+  $("o-type").textContent="ДЛЯ ТЕБЯ, «"+r.name.toUpperCase()+"»";
+  var tl=[["ДЕНЬ 1","Видишь, куда на самом деле уходят твои деньги"],["ДЕНЬ 7","Первые деньги лежат на твоём счёте «Моё»"],["ДЕНЬ 14","Свои денежные правила — и спокойствие вместо «а вдруг»"]];
+  $("o-tl").innerHTML=tl.map(function(x){return '<div class="p"><b>'+x[0]+'</b><span>'+esc(x[1])+'</span></div>'}).join("");
+  var icons=["📲","💛","🏦","🧮","💬","📜"];
+  $("o-inside").innerHTML=KT.offer.bullets.map(function(t,i){return '<div class="t card"><i>'+(icons[i]||"✦")+'</i>'+esc(t)+'</div>'}).join("");
+  if(KT.offer.disclaimer)$("o-disc").textContent=KT.offer.disclaimer;
+  var id=sid(),q="&q=kod&w="+encodeURIComponent(wish.id)+"&k="+result;
+  $("o-pay").href="https://bot.yulialavri.ru/bot/pay_site.php?s="+id+q+"&u="+encodeURIComponent(src())+(cp()?"&cp="+cp():"");
+  $("o-pay3").href=$("o-pay").href+"&t=3";$("st-pay").href=$("o-pay").href;
+  var tg=CONFIG.TG_BOT_URL;$("o-tg").href=tg+"?start=kod_"+result;
+  show("s-offer");sitePrice(id,q,true);
+}
+function sitePrice(id,q,start){
+  fetch("https://bot.yulialavri.ru/bot/offer.php?s="+id+q+(start?"&start=1":""),{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
+    if(!d||!d.ok)return;
+    var shift=Date.now()-d.now*1000,dl=d.deadline*1000,S=d.set;
+    $("o-full").textContent=rub(d.full);$("o-set").hidden=!S;$("o-one").hidden=!S;
+    var setP=function(low){if(!S)return;var p=low?S.low:S.full;$("s-price").textContent=rub(p);$("s-old").textContent=rub(S.strike);
+      $("s-txt").textContent="Твой практикум + ещё два, которые продолжают тему. 42 дня маленьких шагов. По отдельности — "+rub(S.strike)+", вместе — "+rub(p)+".";
+      $("o-pay3").innerHTML="Взять 3 за "+rub(p)+' <span class="arr">→</span>';
+      var ul=$("s-list");if(!ul.childNodes.length)S.names.forEach(function(n){var li=document.createElement("li");li.textContent=n;ul.appendChild(li)})};
+    clearInterval(timerId);
+    var low=function(on){var p=on?d.low:d.full;$("o-price").textContent=rub(p);$("o-old").textContent=on?rub(d.full):"";$("st-price").textContent=rub(p);
+      $("o-pay").innerHTML="Начать за "+rub(p)+' <span class="arr">→</span>';setP(on)};
+    if(!d.deadline){low(true);$("o-left").innerHTML="30<span class=c>:</span>00";return}
+    var tick=function(){var left=dl-(Date.now()-shift);
+      if(left<=0){clearInterval(timerId);low(false);$("o-timer").classList.add("over");$("o-left").textContent="";$("o-tnote").textContent="Спеццена закончилась. Практикум — "+rub(d.full)+".";$("st-left").textContent="";return}
+      var m=Math.floor(left/6e4),s=Math.floor(left%6e4/1e3),mm=(m<10?"0":"")+m,ss=(s<10?"0":"")+s;
+      low(true);$("o-left").innerHTML=mm+'<span class="c">:</span>'+ss;$("st-left").textContent="⏳ "+mm+":"+ss+" · потом "+rub(d.full)};
+    tick();timerId=setInterval(tick,1000);
+  }).catch(function(){});
+}
+/* липкая кнопка: когда большая кнопка ушла за экран */
+(function(){if(!("IntersectionObserver" in window))return;var o=new IntersectionObserver(function(es){es.forEach(function(e){var on=$("s-offer").classList.contains("on");$("sticky").classList.toggle("on",on&&!e.isIntersecting&&e.boundingClientRect.top<0)})},{threshold:0});o.observe($("o-pay"))})();
+$("st-pay").addEventListener("click",function(e){e.preventDefault();$("o-pay").click()});
+
+/* ===== навигация ===== */
+document.addEventListener("click",function(e){
+  var g=e.target.closest&&e.target.closest("[data-go]");if(!g)return;
+  var act=g.getAttribute("data-go");vibr();
+  if(act==="start"){answers=[];cur=0;renderQ();show("s-q")}
+  if(act==="continue"){renderQ();show("s-q")}
+  if(act==="offer"){renderOffer()}
+  if(act==="restart"){answers=[];cur=0;result=null;store("yl_offer_kodnew","");show("s-intro")}
+});
+$("q-back").onclick=function(){if(busy)return;if(cur===0){show("s-intro");return}cur--;answers.length=cur;fadeQ()};
+
+/* вернулась в течение 12 ч — сразу её «новая версия» и цена, без теста заново */
+(function(){var o=null;try{o=JSON.parse(store("yl_offer_kodnew")||"null")}catch(e){}
+  var w=o&&o.t&&Date.now()-o.t<432e5&&T[o.r]&&KT.wishes.filter(function(x){return x.id===o.w})[0];
+  if(w){result=o.r;renderNew(w)}else show("s-intro")})();
+</script>
+<script>
+/* счётчик воронки (без личных данных) — как на /kod/ */
+(function(){
+  var Q="kod",sid=window.sid(),u=window.src();
+  function t(e){var url="https://bot.yulialavri.ru/bot/t.php?q="+Q+"&e="+e+"&s="+sid+"&u="+encodeURIComponent(u);try{if(!(navigator.sendBeacon&&navigator.sendBeacon(url)))fetch(url,{keepalive:true,mode:"no-cors"})}catch(x){}}
+  window.ylTrack=t;t("view");
+  var map={"s-q":"start","s-res":"result","s-offer":"offer"},orig=window.show;
+  window.show=function(id){if(map[id])t(map[id]);return orig.apply(this,arguments)};
+  document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest("a");if(!a)return;
+    if(a.id==="o-pay"||a.id==="o-pay3")t("pay_click");else if(a.id==="o-tg")t("tg_click")},true);
+})();
+</script>
+<!-- окно оплаты без перехода (09.11): форма Prodamus открывается поверх страницы, после оплаты — кнопка в Telegram -->
+<style>
+#pf{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:stretch;justify-content:center;background:rgba(47,38,41,.45)}
+#pf[hidden]{display:none}
+#pf .pf-box{position:relative;display:flex;flex-direction:column;width:100%;max-width:520px;height:100%;height:100dvh;background:#fff;box-shadow:0 0 60px rgba(0,0,0,.25)}
+#pf .pf-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:6px 8px 6px 18px;background:var(--bg);border-bottom:1px solid var(--line);font-size:14px;color:var(--mut)}
+#pf .pf-x{width:44px;height:44px;border:0;border-radius:50%;background:transparent;font-size:22px;color:var(--tx);cursor:pointer}
+#pf iframe{flex:1;width:100%;border:0;display:block;background:#fff}
+#pf iframe[hidden]{display:none}
+#pf iframe.pf-wait{opacity:0}
+#pf .pf-load[hidden]{display:none}
+#pf .pf-int{display:block;width:100%;padding:11px 18px;border:0;border-bottom:1px solid var(--line);background:#fff;color:var(--plum);font:600 15px var(--sans);text-align:left;cursor:pointer}
+#pf .pf-int[hidden]{display:none}
+#pf .pf-load{position:absolute;left:0;right:0;top:45%;text-align:center;color:var(--mut);font-size:16px}
+#pf .pf-ok{flex:1;display:flex;flex-direction:column;justify-content:center;padding:32px 24px;text-align:center;background:var(--bg)}
+#pf .pf-ok[hidden]{display:none}
+#pf .pf-ok h3{font:600 30px/1.2 var(--serif);color:var(--plum);margin-bottom:12px}
+#pf .pf-ok p{color:var(--mut);margin-bottom:24px}
+html.pf-lock,html.pf-lock body{overflow:hidden}
+</style>
+<div id="pf" hidden role="dialog" aria-modal="true" aria-label="Оплата">
+  <div class="pf-box">
+    <div class="pf-bar"><span>🔒 Безопасная оплата</span><button type="button" class="pf-x" id="pf-x" aria-label="Закрыть">✕</button></div>
+    <button type="button" class="pf-int" id="pf-int">🌍 Карта не из России? Оплатить в долларах →</button>
+    <div class="pf-load" id="pf-load">Открываю оплату…</div>
+    <iframe id="pf-f" title="Оплата" allow="payment"></iframe>
+    <div class="pf-ok" id="pf-ok" hidden>
+      <h3>Оплата прошла 🤍</h3>
+      <p>Остался один шаг: нажми кнопку — практикум откроется в Telegram, первое задание уже ждёт тебя.</p>
+      <a class="btn btn--main" id="pf-tg" href="#">Открыть практикум в Telegram →</a>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var pf=document.getElementById("pf"), fr=document.getElementById("pf-f"), ok=document.getElementById("pf-ok"), pay=document.getElementById("o-pay");
+  var BASE="https://bot.yulialavri.ru/bot/pay_site.php", poll=null, until=0, paid=false, href="";
+  if(!pf||!pay) return;
+  function prm(u,k){try{return new URL(u).searchParams.get(k)||""}catch(e){return ""}}
+  function lock(on){document.documentElement.classList.toggle("pf-lock",on)}
+  function done(){
+    if(paid) return; paid=true; clearInterval(poll);
+    var s=prm(href,"s"), tg=(window.CONFIG&&CONFIG.TG_BOT_URL)||"https://t.me/yulia_lavri_bot";
+    document.getElementById("pf-tg").href=tg+(tg.indexOf("?")>-1?"&":"?")+"start=paid_"+s;
+    fr.hidden=true; fr.src="about:blank"; ok.hidden=false; document.getElementById("pf-load").hidden=true; document.getElementById("pf-int").hidden=true; pf.hidden=false; lock(true);
+  }
+  function check(){
+    if(Date.now()>until){clearInterval(poll);return}
+    fetch(href.replace("/pay_site.php","/offer.php"),{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){if(d&&d.paid)done()}).catch(function(){});
+  }
+  function open(e){
+    href=(e.currentTarget&&e.currentTarget.href)||pay.href||"";
+    if(href.indexOf(BASE)!==0) return; /* запасные ссылки из настроек — как раньше */
+    e.preventDefault();
+    if(paid&&prm(href,"s")===prm(pay.href,"s")){pf.hidden=false;lock(true);return}
+    ok.hidden=true; intOn=false; var pi=document.getElementById("pf-int"); pi.hidden=false; pi.textContent=INT_TXT; load(href+"&f=1");
+    pf.hidden=false; lock(true);
+    clearInterval(poll); until=Date.now()+30*6e4; poll=setInterval(check,4000);
+    /* таймер 30 минут стартует с нажатия — обновим цену на странице */
+    setTimeout(function(){ if(typeof sitePrice==="function"){var s=prm(href,"s"); sitePrice(s,"&q="+encodeURIComponent(prm(href,"q"))+"&w="+encodeURIComponent(prm(href,"w"))+"&k="+encodeURIComponent(prm(href,"k")))} },2500);
+  }
+  function load(u){ document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank"){fr.className="";document.getElementById("pf-load").hidden=true}}; fr.src=u; }
+  var INT_TXT="🌍 Карта не из России? Оплатить в долларах →", RU_TXT="← Назад: оплата картой РФ или СБП", intOn=false;
+  document.getElementById("pf-int").addEventListener("click",function(){ /* lava.top: карта не из России, цена по курсу ЦБ (п. 79); 11.11 — оплата остаётся в окне, можно вернуться */
+    intOn=!intOn; this.textContent=intOn?RU_TXT:INT_TXT;
+    load(intOn ? href.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")+"&f=1" : href+"&f=1");
+  });
+  function close(){ pf.hidden=true; lock(false); if(!paid) fr.src="about:blank"; }
+  pay.addEventListener("click",open);
+  var pay3=document.getElementById("o-pay3"); if(pay3) pay3.addEventListener("click",open); /* набор «3 практикума» — то же окно */
+  document.getElementById("pf-x").addEventListener("click",close);
+  pf.addEventListener("click",function(e){if(e.target===pf)close()});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!pf.hidden)close()});
+  window.addEventListener("message",function(e){if(e.origin==="https://bot.yulialavri.ru"&&e.data&&e.data.yl==="paid")done()});
+})();
+</script>
+
+</body>
+</html>
