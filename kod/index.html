@@ -784,7 +784,7 @@ function renderPrice(){
   $("p-head").innerHTML=P_HEAD;
   setTar(1);show("s-price");sitePrice(id,q,true);
 }
-[].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){vibr();setTar(+b.dataset.t)}});
+[].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){vibr();setTar(+b.dataset.t);if(+b.dataset.t===3)track("set_view")}});
 function sitePrice(id,q,start){
   fetch("https://bot.yulialavri.ru/bot/offer.php?s="+id+q+(start?"&start=1":""),{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
     if(!d||!d.ok)return;
@@ -917,6 +917,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
   window.addEventListener("message",function(e){if(e.origin==="https://bot.yulialavri.ru"&&e.data&&e.data.yl==="paid")done()});
 })();
 </script>
+
 
 
 
