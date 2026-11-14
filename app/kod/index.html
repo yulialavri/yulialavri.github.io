@@ -391,7 +391,7 @@ function paint(){if(!P)return;var set=TAR===3&&P.set,p=set?(on?P.set.low:P.set.f
   $("p-pay").innerHTML=(set?"Взять 3 практикума за "+rub(p):P_BTN)+" <span>→</span>";
   $("p-note").textContent=on?"Закроешь — будет "+rub(set?P.set.full:P.full)+". А всё останется как было.":"Спеццена закончилась. Сейчас — "+rub(p)+"."}
 [].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){hap();TAR=+b.dataset.t;[].forEach.call($("seg").children,function(x){x.classList.toggle("on",x===b)});paint()}});
-$("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");$("pf-f").src=TAR===3&&P.set?P.set.pay:P.pay;$("pf").hidden=false;
+$("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");var U=TAR===3&&P.set?P.set.pay:P.pay;try{tg.openLink(U)}catch(e){location.href=U}/* оплата во внешнем браузере: в окне внутри Telegram форма Prodamus не работала (урок 14.11) */
   clearInterval(poll);var until=Date.now()+30*6e4;poll=setInterval(function(){if(Date.now()>until){clearInterval(poll);return}api("state").then(function(d){if(d&&d.paid){clearInterval(poll);$("pf").hidden=true;$("pf-f").src="about:blank";show("s-ok");hap("ok")}})},4000)};
 function paidView(){$("seg").hidden=true;$("p-int").hidden=true;$("p-head").innerHTML="Практикум у тебя <em>уже открыт</em> 🤍";
   document.querySelector(".pbox").innerHTML='<p style="font-size:17px;margin-bottom:14px">«Денежный код: 14 дней» уже твой. Задание дня ждёт тебя в чате — нажми «Мой день».</p><button class="btn btn--main" onclick="try{Telegram.WebApp.close()}catch(e){}">Перейти в чат <span>→</span></button>'}
