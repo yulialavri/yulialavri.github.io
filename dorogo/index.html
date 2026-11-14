@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
+<script>var BOTB=(location.hostname==="yulialavri.online"?"https://yulialavri.online":"https://bot.yulialavri.ru")+"/bot";/* зеркало для Украины, 14.11 */</script>
 <meta charset="utf-8"><meta http-equiv="Cache-Control" content="no-cache, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F6EEE8">
@@ -564,7 +565,7 @@ function renderNew(wish){
   if(KT.offer.note){$("o-note").textContent=KT.offer.note; $("o-note").hidden=false}
   if(KT.offer.disclaimer){$("o-disc").textContent=KT.offer.disclaimer; $("o-disc").hidden=false}
   var id=sid(), q="&q=dorogo&w="+encodeURIComponent(wish.id)+"&k="+result;
-  $("o-pay").href="https://bot.yulialavri.ru/bot/pay_site.php?s="+id+q+"&u="+encodeURIComponent(src())+(cp()?"&cp="+cp():"");
+  $("o-pay").href=BOTB+"/pay_site.php?s="+id+q+"&u="+encodeURIComponent(src())+(cp()?"&cp="+cp():"");
   $("o-pay3").href=$("o-pay").href+"&t=3";
   var tg=CONFIG.TG_BOT_URL; $("o-tg").href=isSet(tg)?tg+(tg.indexOf("?")>-1?"&":"?")+"start=dor_"+result:"#";
   show("s-nv");
@@ -575,7 +576,7 @@ function renderNew(wish){
 /* цена и таймер: срок хранит сервер (30 минут с первого показа), здесь только отсчёт */
 function rub(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" ₽"}
 function sitePrice(id,q){
-  fetch("https://bot.yulialavri.ru/bot/offer.php?s="+id+q,{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
+  fetch(BOTB+"/offer.php?s="+id+q,{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){
     if(!d||!d.ok) return;
     var shift=Date.now()-d.now*1000, dl=d.deadline*1000;
     $("o-full").textContent=rub(d.full);
@@ -668,7 +669,7 @@ $("l-offer").href=CONFIG.OFFER_URL; $("l-privacy").href=CONFIG.PRIVACY_URL;
 /* счётчик воронки (без личных данных): просмотр → начала → результат → предложение → клики; данные на наш сервер /bot/t.php */
 (function(){
   var Q="dorogo", sid=window.sid(), u=window.src();
-  function t(e){var url="https://bot.yulialavri.ru/bot/t.php?q="+Q+"&e="+e+"&s="+sid+"&u="+encodeURIComponent(u);try{if(!(navigator.sendBeacon&&navigator.sendBeacon(url)))fetch(url,{keepalive:true,mode:"no-cors"})}catch(x){}}
+  function t(e){var url=BOTB+"/t.php?q="+Q+"&e="+e+"&s="+sid+"&u="+encodeURIComponent(u);try{if(!(navigator.sendBeacon&&navigator.sendBeacon(url)))fetch(url,{keepalive:true,mode:"no-cors"})}catch(x){}}
   window.ylTrack=t; t("view");
   var map={"s-q":"start","s-res":"result","s-nv":"offer"}, orig=window.show;
   if(typeof orig==="function") window.show=function(id){if(map[id])t(map[id]);return orig.apply(this,arguments)};
@@ -676,7 +677,7 @@ $("l-offer").href=CONFIG.OFFER_URL; $("l-privacy").href=CONFIG.PRIVACY_URL;
     if(a.id==="o-pay"||a.id==="o-pay3")t("pay_click");else if(a.id==="o-tg")t("tg_click");else if(a.id==="o-ig")t("ig_click")},true);
 })();
 </script>
-<!-- окно оплаты без перехода (09.11): форма Prodamus открывается поверх страницы, после оплаты — кнопка в Telegram -->
+<!-- окно оплаты (09.11) отключено 14.11: оплата открывается на всю страницу -->
 <style>
 #pf{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:stretch;justify-content:center;background:rgba(47,38,41,.45)}
 #pf[hidden]{display:none}
@@ -710,46 +711,16 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
   </div>
 </div>
 <script>
+/* оплата на сайте (14.11): форма Prodamus — на всю страницу, не окном (урок «никогда не открывать внутри окна»); карта не из России — ссылка lava под кнопкой */
 (function(){
-  var pf=document.getElementById("pf"), fr=document.getElementById("pf-f"), ok=document.getElementById("pf-ok"), pay=document.getElementById("o-pay");
-  var BASE="https://bot.yulialavri.ru/bot/pay_site.php", poll=null, until=0, paid=false, href="";
-  if(!pf||!pay) return;
-  function prm(u,k){try{return new URL(u).searchParams.get(k)||""}catch(e){return ""}}
-  function lock(on){document.documentElement.classList.toggle("pf-lock",on)}
-  function done(){
-    if(paid) return; paid=true; clearInterval(poll);
-    var s=prm(href,"s"), tg=(window.CONFIG&&CONFIG.TG_BOT_URL)||"https://t.me/yulia_lavri_bot";
-    document.getElementById("pf-tg").href=tg+(tg.indexOf("?")>-1?"&":"?")+"start=paid_"+s;
-    fr.hidden=true; fr.src="about:blank"; ok.hidden=false; document.getElementById("pf-load").hidden=true; document.getElementById("pf-int").hidden=true; pf.hidden=false; lock(true);
-  }
-  function check(){
-    if(Date.now()>until){clearInterval(poll);return}
-    fetch(href.replace("/pay_site.php","/offer.php"),{cache:"no-store"}).then(function(r){return r.json()}).then(function(d){if(d&&d.paid)done()}).catch(function(){});
-  }
-  function open(e){
-    href=(e.currentTarget&&e.currentTarget.href)||pay.href||"";
-    if(href.indexOf(BASE)!==0) return; /* запасные ссылки из настроек — как раньше */
-    e.preventDefault();
-    if(paid&&prm(href,"s")===prm(pay.href,"s")){pf.hidden=false;lock(true);return}
-    ok.hidden=true; intOn=false; var pi=document.getElementById("pf-int"); pi.hidden=false; pi.textContent=INT_TXT; load(href+"&f=1");
-    pf.hidden=false; lock(true);
-    clearInterval(poll); until=Date.now()+30*6e4; poll=setInterval(check,4000);
-    /* таймер 30 минут стартует с нажатия — обновим цену на странице */
-    setTimeout(function(){ if(typeof sitePrice==="function"){var s=prm(href,"s"); sitePrice(s,"&q="+encodeURIComponent(prm(href,"q"))+"&w="+encodeURIComponent(prm(href,"w"))+"&k="+encodeURIComponent(prm(href,"k")))} },2500);
-  }
-  function load(u){ document.getElementById("pf-load").hidden=false; fr.hidden=false; fr.className="pf-wait"; fr.onload=function(){if(fr.src!=="about:blank"){fr.className="";document.getElementById("pf-load").hidden=true}}; fr.src=u; }
-  var INT_TXT="🌍 Карта не из России? Оплатить в долларах →", RU_TXT="← Назад: оплата картой РФ или СБП", intOn=false;
-  document.getElementById("pf-int").addEventListener("click",function(){ /* lava.top: карта не из России, цена по курсу ЦБ (п. 79); 11.11 — оплата остаётся в окне, можно вернуться */
-    intOn=!intOn; this.textContent=intOn?RU_TXT:INT_TXT;
-    load(intOn ? href.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")+"&f=1" : href+"&f=1");
-  });
-  function close(){ pf.hidden=true; lock(false); if(!paid) fr.src="about:blank"; }
-  pay.addEventListener("click",open);
-  var pay3=document.getElementById("o-pay3"); if(pay3) pay3.addEventListener("click",open); /* набор «3 практикума» — то же окно */
-  document.getElementById("pf-x").addEventListener("click",close);
-  pf.addEventListener("click",function(e){if(e.target===pf)close()});
-  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!pf.hidden)close()});
-  window.addEventListener("message",function(e){if(e.origin==="https://bot.yulialavri.ru"&&e.data&&e.data.yl==="paid")done()});
+  var pay=document.getElementById("o-pay"), pay3=document.getElementById("o-pay3"), BASE=BOTB+"/pay_site.php";
+  if(!pay) return;
+  function go(e){var h=(e.currentTarget&&e.currentTarget.href)||"";if(h.indexOf(BASE)!==0)return;e.preventDefault();location.href=h}
+  pay.addEventListener("click",go); if(pay3) pay3.addEventListener("click",go);
+  var a=document.createElement("a"); a.id="o-int"; a.href="#"; a.textContent="🌍 Карта не из России? Оплатить в долларах →";
+  a.style.cssText="display:block;margin:14px auto 0;text-align:center;font-size:15px;color:var(--plum);text-decoration:underline";
+  a.addEventListener("click",function(e){e.preventDefault();var b=(pay3&&!pay3.hidden)?pay3:pay,h=b.href||"";if(h.indexOf(BASE)!==0)return;location.href=h.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")});
+  (pay3||pay).insertAdjacentElement("afterend",a);
 })();
 </script>
 </body>
