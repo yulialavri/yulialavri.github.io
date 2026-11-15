@@ -143,6 +143,8 @@ h1{font-size:clamp(36px,10vw,46px)}h2{font-size:clamp(28px,8vw,34px)}em{font-sty
 .int{display:block;text-align:center;font-size:14px;font-weight:700;color:var(--plum);text-decoration:underline;text-underline-offset:3px;margin-top:6px}
 
 /* окно оплаты внутри мини-приложения */
+.payhint{font-size:13px;font-weight:700;color:var(--mut);margin:14px 2px 6px;text-align:left}
+#p-int{margin-top:0}
 #pc{position:fixed;inset:0;z-index:110;background:rgba(47,38,41,.5);display:flex;align-items:flex-end;justify-content:center}
 #pc[hidden]{display:none}
 #pc .box{width:100%;max-width:520px;background:#fff;border-radius:22px 22px 0 0;padding:22px 18px 26px;box-shadow:0 -10px 40px rgba(0,0,0,.2)}
@@ -217,10 +219,12 @@ h1{font-size:clamp(36px,10vw,46px)}h2{font-size:clamp(28px,8vw,34px)}em{font-sty
       <div class="price"><span class="new" id="p-price">990 ₽</span><span class="old" id="p-old">1 990 ₽</span></div>
       <ul class="slist" id="p-list" hidden></ul>
       <div class="timer" id="p-timer"><div class="clock" id="p-left">30:00</div><p id="p-note"></p></div>
+      <div class="payhint">💳 Карта России или СБП</div>
       <button class="btn btn--main" id="p-pay">Да, я начинаю сегодня <span>→</span></button>
+      <div class="payhint" id="p-int-h" hidden>🌍 Карта другой страны — Казахстан, Узбекистан и др.</div>
+      <button class="btn btn--ghost" id="p-int" hidden>Оплатить картой любой страны <span>→</span></button>
       <div class="trust"><span>✓ Один платёж</span><span>✓ Без подписки</span><span>✓ Доступ здесь, в боте</span></div>
     </div>
-    <button class="int" id="p-int" hidden>🌍 Карта не из России</button>
     <p class="legal">Практикум носит информационный характер. Это не консультация, не финансовый совет и не терапия. <a href="/oferta.html" target="_blank">Оферта</a> · <a href="/refund.html" target="_blank">Возврат</a></p>
   </section>
 
@@ -390,7 +394,7 @@ $("c-next").onclick=function(){hap();renderPrice()};
 var SUMTXT="",P=null,TAR=1,timer=null,on=true,poll=null;
 function renderPrice(){if(SUMTXT)$("p-head").innerHTML=P_HEAD(SUMTXT);show("s-price");ev("price");api("price").then(function(d){if(!d||!d.ok)return;P=d;if(d.paid){paidView();return}
   $("seg").hidden=!d.set;if(d.set){var ul=$("p-list");ul.innerHTML=d.set.names.map(function(n){return "<li>"+esc(n)+"</li>"}).join("")}
-  $("p-int").hidden=!d.lava;var shift=Date.now()-d.now*1000,dl=d.deadline*1000;clearInterval(timer);
+  $("p-int").hidden=!d.lava;$("p-int-h").hidden=!d.lava;var shift=Date.now()-d.now*1000,dl=d.deadline*1000;clearInterval(timer);
   var tick=function(){var left=dl-(Date.now()-shift);on=left>0;paint();if(!on){clearInterval(timer);$("p-timer").classList.add("over");$("p-left").textContent="";return}
     var m=Math.floor(left/6e4),s=Math.floor(left%6e4/1e3);$("p-left").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s};
   tick();timer=setInterval(tick,1000)})}
@@ -401,7 +405,7 @@ function paint(){if(!P)return;var set=TAR===3&&P.set,p=set?(on?P.set.low:P.set.f
 [].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){hap();TAR=+b.dataset.t;[].forEach.call($("seg").children,function(x){x.classList.toggle("on",x===b)});paint()}});
 $("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");var U=TAR===3&&P.set?P.set.pay:P.pay;PC_ARM=Date.now();PC_SHOWN=false;try{tg.openLink(U)}catch(e){location.href=U}/* оплата во внешнем браузере: в окне внутри Telegram форма Prodamus не работала (урок 14.11) */
   clearInterval(poll);var until=Date.now()+30*6e4;poll=setInterval(function(){if(Date.now()>until){clearInterval(poll);return}api("state").then(function(d){if(d&&d.paid){clearInterval(poll);$("pf").hidden=true;$("pf-f").src="about:blank";show("s-ok");hap("ok")}})},4000)};
-function paidView(){$("seg").hidden=true;$("p-int").hidden=true;$("p-head").innerHTML="Практикум у тебя <em>уже открыт</em> 🤍";
+function paidView(){$("seg").hidden=true;$("p-int").hidden=true;$("p-int-h").hidden=true;$("p-head").innerHTML="Практикум у тебя <em>уже открыт</em> 🤍";
   document.querySelector(".pbox").innerHTML='<p style="font-size:17px;margin-bottom:14px">«Денежный код: 14 дней» уже твой. Задание дня ждёт тебя в чате — нажми «Мой день».</p><button class="btn btn--main" onclick="try{Telegram.WebApp.close()}catch(e){}">Перейти в чат <span>→</span></button>'}
 $("pf-x").onclick=function(){$("pf").hidden=true;$("pf-f").src="about:blank"};
 /* «Кассир» (15.11): вернулась без оплаты — сразу «Что помешало?» */

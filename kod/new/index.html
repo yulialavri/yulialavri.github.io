@@ -932,10 +932,11 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
   if(!pay) return;
   function go(e){var h=(e.currentTarget&&e.currentTarget.href)||"";if(h.indexOf(BASE)!==0)return;e.preventDefault();if(window.ylPcArm)window.ylPcArm(h);location.href=h}
   pay.addEventListener("click",go); if(pay3) pay3.addEventListener("click",go);
-  var a=document.createElement("a"); a.id="o-int"; a.href="#"; a.textContent="🌍 Карта не из России? Оплатить в долларах →";
-  a.style.cssText="display:block;margin:14px auto 0;text-align:center;font-size:15px;color:var(--plum);text-decoration:underline";
+  var hr=document.createElement("div"); hr.textContent="💳 Карта России или СБП"; hr.style.cssText="font-size:13px;font-weight:700;color:var(--mut);margin:0 2px 6px;text-align:left"; pay.parentNode.insertBefore(hr,pay);
+  var a=document.createElement("a"); a.id="o-int"; a.href="#"; a.className="btn btn--ghost"; a.innerHTML="Оплатить картой любой страны <span class=\"arr\">→</span>";
+  var ah=document.createElement("div"); ah.textContent="🌍 Карта другой страны — Казахстан, Узбекистан и др."; ah.style.cssText="font-size:13px;font-weight:700;color:var(--mut);margin:16px 2px 6px;text-align:left";
   a.addEventListener("click",function(e){e.preventDefault();var b=(pay3&&!pay3.hidden)?pay3:pay,h=b.href||"";if(h.indexOf(BASE)!==0)return;location.href=h.replace("/pay_site.php","/pay_lava.php").replace(/&u=[^&]*/,"")});
-  (pay3||pay).insertAdjacentElement("afterend",a);
+  (pay3||pay).insertAdjacentElement("afterend",ah); ah.insertAdjacentElement("afterend",a);
 })();
 
 /* «Кассир» (15.11): вернулась со страницы оплаты без оплаты — сразу «Что помешало?» */
@@ -964,6 +965,7 @@ html.pf-lock,html.pf-lock body{overflow:hidden}
   window.addEventListener("pageshow",back);document.addEventListener("visibilitychange",back);window.addEventListener("focus",back);back();
 })();
 </script>
+
 
 
 
