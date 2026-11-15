@@ -143,6 +143,13 @@ h1{font-size:clamp(36px,10vw,46px)}h2{font-size:clamp(28px,8vw,34px)}em{font-sty
 .int{display:block;text-align:center;font-size:14px;font-weight:700;color:var(--plum);text-decoration:underline;text-underline-offset:3px;margin-top:6px}
 
 /* окно оплаты внутри мини-приложения */
+#pc{position:fixed;inset:0;z-index:110;background:rgba(47,38,41,.5);display:flex;align-items:flex-end;justify-content:center}
+#pc[hidden]{display:none}
+#pc .box{width:100%;max-width:520px;background:#fff;border-radius:22px 22px 0 0;padding:22px 18px 26px;box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+#pc h3{font-size:19px;font-weight:800;color:var(--plum-deep);margin:0 0 6px}
+#pc p{font-size:15px;color:var(--mut);margin:0 0 14px;line-height:1.45}
+#pc .opt2{display:block;width:100%;text-align:left;padding:13px 16px;margin:0 0 8px;border:1.5px solid #e9dfe3;border-radius:14px;background:#fff;font-size:16px;font-weight:700;color:var(--tx,#2f2629)}
+#pc .x{float:right;font-size:20px;background:none;border:0;color:var(--mut)}
 #pf{position:fixed;inset:0;z-index:100;background:rgba(47,38,41,.5);display:flex;align-items:flex-end;justify-content:center}
 #pf .box{width:100%;max-width:520px;height:92vh;background:#fff;border-radius:22px 22px 0 0;overflow:hidden;display:flex;flex-direction:column}
 #pf .bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;font-size:14px;font-weight:700;color:var(--mut);border-bottom:1px solid #eee}
@@ -224,6 +231,7 @@ h1{font-size:clamp(36px,10vw,46px)}h2{font-size:clamp(28px,8vw,34px)}em{font-sty
     <button class="btn btn--main" id="ok-close">Перейти в чат <span>→</span></button>
   </section>
 </main>
+<div id="pc" hidden><div class="box"><button class="x" id="pc-x">✕</button><div id="pc-in"></div></div></div>
 <div id="pf" hidden><div class="box"><div class="bar"><span>🔒 Безопасная оплата</span><button id="pf-x" style="font-size:20px">✕</button></div><iframe id="pf-f" title="Оплата" allow="payment"></iframe></div></div>
 
 <script>
@@ -391,11 +399,32 @@ function paint(){if(!P)return;var set=TAR===3&&P.set,p=set?(on?P.set.low:P.set.f
   $("p-pay").innerHTML=(set?"Взять 3 практикума за "+rub(p):P_BTN)+" <span>→</span>";
   $("p-note").textContent=on?"Закроешь — будет "+rub(set?P.set.full:P.full)+". А всё останется как было.":"Спеццена закончилась. Сейчас — "+rub(p)+"."}
 [].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){hap();TAR=+b.dataset.t;[].forEach.call($("seg").children,function(x){x.classList.toggle("on",x===b)});paint()}});
-$("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");var U=TAR===3&&P.set?P.set.pay:P.pay;try{tg.openLink(U)}catch(e){location.href=U}/* оплата во внешнем браузере: в окне внутри Telegram форма Prodamus не работала (урок 14.11) */
+$("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");var U=TAR===3&&P.set?P.set.pay:P.pay;PC_ARM=Date.now();PC_SHOWN=false;try{tg.openLink(U)}catch(e){location.href=U}/* оплата во внешнем браузере: в окне внутри Telegram форма Prodamus не работала (урок 14.11) */
   clearInterval(poll);var until=Date.now()+30*6e4;poll=setInterval(function(){if(Date.now()>until){clearInterval(poll);return}api("state").then(function(d){if(d&&d.paid){clearInterval(poll);$("pf").hidden=true;$("pf-f").src="about:blank";show("s-ok");hap("ok")}})},4000)};
 function paidView(){$("seg").hidden=true;$("p-int").hidden=true;$("p-head").innerHTML="Практикум у тебя <em>уже открыт</em> 🤍";
   document.querySelector(".pbox").innerHTML='<p style="font-size:17px;margin-bottom:14px">«Денежный код: 14 дней» уже твой. Задание дня ждёт тебя в чате — нажми «Мой день».</p><button class="btn btn--main" onclick="try{Telegram.WebApp.close()}catch(e){}">Перейти в чат <span>→</span></button>'}
 $("pf-x").onclick=function(){$("pf").hidden=true;$("pf-f").src="about:blank"};
+/* «Кассир» (15.11): вернулась без оплаты — сразу «Что помешало?» */
+var PC_ARM=0,PC_SHOWN=false;
+var PC={ask:"Вижу, ты дошла до оплаты, но что-то помешало 🤍 Подскажи, что случилось — помогу прямо сейчас:",
+ o:"Давай ещё раз 🤍 Ссылка откроется в браузере. Если форма долго грузится — подожди пару секунд. Можно платить картой или через СБП.",
+ p:"Номер нужен только для электронного чека — так требует закон. Никто не будет звонить или писать по нему 🤍",
+ d:"Понимаю 🤍 Это 14 дней по 10–15 минут — меньше, чем стоит один обед в кафе. Цена держится ещё немного.",
+ q:"Напиши свой вопрос в чат с ботом — отвечу там 🤍"};
+function pcPay(){var U=TAR===3&&P.set?P.set.pay:P.pay;try{tg.openLink(U)}catch(e){location.href=U}PC_ARM=Date.now();PC_SHOWN=false;$("pc").hidden=true}
+function pcView(html){$("pc-in").innerHTML=html;$("pc").hidden=false}
+function pcAsk(){pcView('<h3>Что помешало оплатить?</h3><p>'+PC.ask.replace(/:$/,'')+'</p>'+
+ '<button class="opt2" data-k="o">Не открылась оплата</button><button class="opt2" data-k="c">Нет российской карты</button><button class="opt2" data-k="p">Не хочу вводить телефон</button><button class="opt2" data-k="d">Дорого</button><button class="opt2" data-k="q">Есть вопрос</button>')}
+$("pc-in").addEventListener("click",function(e){var b=e.target.closest("[data-k]");if(!b)return;var k=b.dataset.k;ev("pc_"+k);
+ if(k==="o"){pcPay();return}
+ if(k==="c"){if(P&&P.lava){try{tg.openLink(P.lava+(TAR===3?"&t=3":""))}catch(x){location.href=P.lava}}else pcPay();$("pc").hidden=true;return}
+ if(k==="q"){pcView('<h3>Есть вопрос</h3><p>'+PC.q+'</p><button class="btn btn--main" id="pc-chat">Написать в чат →</button>');$("pc-chat").onclick=function(){try{tg.close()}catch(x){}};return}
+ pcView('<h3>'+(k==="p"?"Про телефон":"Про цену")+'</h3><p>'+PC[k]+'</p><button class="btn btn--main" id="pc-go">Оплатить →</button>');$("pc-go").onclick=pcPay});
+$("pc-x").onclick=function(){$("pc").hidden=true};
+function pcBack(){if(document.visibilityState==="hidden"||!PC_ARM||PC_SHOWN||Date.now()-PC_ARM<3000)return;
+ api("state").then(function(d){if(d&&!d.paid&&!PC_SHOWN){PC_SHOWN=true;ev("back");if(d.pc)pcAsk()}})}
+document.addEventListener("visibilitychange",pcBack);try{tg.onEvent("activated",pcBack)}catch(e){}window.addEventListener("focus",pcBack);
+
 $("p-int").onclick=function(){if(!P||!P.lava)return;ev("lava");try{tg.openLink(P.lava+(TAR===3?"&t=3":""))}catch(e){location.href=P.lava}};
 $("ok-close").onclick=function(){try{tg.close()}catch(e){}};
 
