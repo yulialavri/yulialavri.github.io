@@ -412,18 +412,18 @@ $("pf-x").onclick=function(){$("pf").hidden=true;$("pf-f").src="about:blank"};
 var PC_ARM=0,PC_SHOWN=false;
 var PC={ask:"Вижу, ты дошла до оплаты, но что-то помешало 🤍 Подскажи, что случилось — помогу прямо сейчас:",
  o:"Давай ещё раз 🤍 Ссылка откроется в браузере. Если форма долго грузится — подожди пару секунд. Можно платить картой или через СБП.",
- p:"Можно без своего номера 🤍 Жми — сразу откроется выбор оплаты: СБП, Сбер, Т-Банк или карта. Ничего вводить не нужно.",
+ p:"Это обычная защищённая страница оплаты — через сервис Prodamus я принимаю оплату 🤍 Номер заказа там служебный, телефон вводить не нужно. Выбери СБП, Сбер, Т-Банк или карту — и сразу откроется доступ в Telegram.",
  d:"Понимаю 🤍 Это 14 дней по 10–15 минут — меньше, чем стоит один обед в кафе. Цена держится ещё немного.",
  q:"Напиши свой вопрос в чат с ботом — отвечу там 🤍"};
 function pcPay(np){var U=(TAR===3&&P.set?P.set.pay:P.pay)+(np?"&np=1":"");try{tg.openLink(U)}catch(e){location.href=U}PC_ARM=Date.now();PC_SHOWN=false;$("pc").hidden=true}
 function pcView(html){$("pc-in").innerHTML=html;$("pc").hidden=false}
 function pcAsk(){pcView('<h3>Что помешало оплатить?</h3><p>'+PC.ask.replace(/:$/,'')+'</p>'+
- '<button class="opt2" data-k="o">Не открылась оплата</button><button class="opt2" data-k="c">Нет российской карты</button><button class="opt2" data-k="p">Не хочу вводить телефон</button><button class="opt2" data-k="d">Дорого</button><button class="opt2" data-k="q">Есть вопрос</button>')}
+ '<button class="opt2" data-k="o">Не открылась оплата</button><button class="opt2" data-k="c">Нет российской карты</button><button class="opt2" data-k="p">Страница оплаты непонятная</button><button class="opt2" data-k="d">Дорого</button><button class="opt2" data-k="q">Есть вопрос</button>')}
 $("pc-in").addEventListener("click",function(e){var b=e.target.closest("[data-k]");if(!b)return;var k=b.dataset.k;ev("pc_"+k);
  if(k==="o"){pcPay(false);return}
  if(k==="c"){if(P&&P.lava){try{tg.openLink(P.lava+(TAR===3?"&t=3":""))}catch(x){location.href=P.lava}}else pcPay(false);$("pc").hidden=true;return}
  if(k==="q"){pcView('<h3>Есть вопрос</h3><p>'+PC.q+'</p><button class="btn btn--main" id="pc-chat">Написать в чат →</button>');$("pc-chat").onclick=function(){try{tg.close()}catch(x){}};return}
- pcView('<h3>'+(k==="p"?"Без номера телефона":"Про цену")+'</h3><p>'+PC[k]+'</p><button class="btn btn--main" id="pc-go">'+(k==="p"?"Оплатить без номера →":"Оплатить →")+'</button>');$("pc-go").onclick=function(){pcPay(k==="p")}});
+ pcView('<h3>'+(k==="p"?"Это безопасно":"Про цену")+'</h3><p>'+PC[k]+'</p><button class="btn btn--main" id="pc-go">'+(k==="p"?"Оплатить →":"Оплатить →")+'</button>');$("pc-go").onclick=function(){pcPay(k==="p")}});
 $("pc-x").onclick=function(){$("pc").hidden=true};
 function pcBack(){if(document.visibilityState==="hidden"||!PC_ARM||PC_SHOWN||Date.now()-PC_ARM<3000)return;
  api("state").then(function(d){if(d&&!d.paid&&!PC_SHOWN){PC_SHOWN=true;ev("back");if(d.pc)pcAsk()}})}
