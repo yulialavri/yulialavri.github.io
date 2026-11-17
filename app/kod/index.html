@@ -142,6 +142,7 @@ h1{font-size:clamp(36px,10vw,46px)}h2{font-size:clamp(28px,8vw,34px)}em{font-sty
 .legal{text-align:center;font-size:12px;color:var(--mut);line-height:1.4}.legal a{color:var(--mut)}
 .int{display:block;text-align:center;font-size:14px;font-weight:700;color:var(--plum);text-decoration:underline;text-underline-offset:3px;margin-top:6px}
 
+.ylp-lab{font-size:14px;font-weight:700;color:var(--plum);margin:14px 2px 8px;text-align:left}.ylp-ph{display:flex;align-items:center;border:1.5px solid #d9c2cc;border-radius:14px;background:#fff}.ylp-ph.err{border-color:#d64545;box-shadow:0 0 0 3px rgba(214,69,69,.12)}.ylp-ph span{padding:0 12px;border-right:1px solid #eadbe1;color:#4a1f3a;font-weight:700;white-space:nowrap;font-size:17px}.ylp-ph input{flex:1;min-width:0;border:0;outline:0;font-size:18px;font-weight:500;padding:14px 12px;background:transparent;color:#2b1022;font-family:inherit}.ylp-err{color:#d64545;font-size:13px;margin:6px 2px 0;text-align:left;display:none}.ylp-b{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;box-sizing:border-box;border:0;border-radius:16px;padding:16px 18px;font-weight:700;font-size:18px;line-height:1.15;cursor:pointer;margin-top:14px;font-family:inherit}.ylp-sbp{background:#1d2b7d;color:#fff;box-shadow:0 6px 16px rgba(29,43,125,.25)}.ylp-card{background:#111;color:#fff}.ylp-note{text-align:center;font-size:12.5px;color:var(--mut);margin:6px 0 0}.ylp-chips{display:inline-flex;gap:6px;align-items:center}.ylp-mir{font-weight:800;font-size:13px;color:#0f754e;background:#fff;border-radius:5px;padding:3px 6px}.ylp-mc{display:inline-block;width:26px;height:16px;position:relative}.ylp-mc i{position:absolute;top:0;width:16px;height:16px;border-radius:50%}.ylp-visa{font-style:italic;font-weight:900;font-size:15px;color:#fff}
 /* окно оплаты внутри мини-приложения */
 .payhint{font-size:13px;font-weight:700;color:var(--mut);margin:14px 2px 6px;text-align:left}
 #p-int{margin-top:0}
@@ -219,9 +220,15 @@ h1{font-size:clamp(36px,10vw,46px)}h2{font-size:clamp(28px,8vw,34px)}em{font-sty
       <div class="price"><span class="new" id="p-price">990 ₽</span><span class="old" id="p-old">1 990 ₽</span></div>
       <ul class="slist" id="p-list" hidden></ul>
       <div class="timer" id="p-timer"><div class="clock" id="p-left">30:00</div><p id="p-note"></p></div>
-      <div class="payhint">💳 Карта России или СБП</div>
-      <button class="btn btn--main" id="p-pay">Да, я начинаю сегодня <span>→</span></button>
-      <div class="payhint" id="p-int-h" hidden>🌍 Карта другой страны — Казахстан, Узбекистан и др.</div>
+      <div class="ylp-lab">Твой телефон — на него придёт чек</div>
+      <div class="ylp-ph" id="p-phb"><span>🇷🇺 +7</span><input id="p-ph" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="900 123-45-67" maxlength="18"></div>
+      <div class="ylp-err" id="p-pherr">Проверь номер: 10 цифр после +7</div>
+      <button class="ylp-b ylp-sbp" id="p-sbp"><svg width="28" height="32" viewBox="0 0 60 68" aria-hidden="true"><polygon points="0,0 18,10 18,58 0,68" fill="#5B57A2"/><polygon points="18,10 60,34 40,34 18,22" fill="#D90751"/><polygon points="18,10 40,34 18,46" fill="#FAB718"/><polygon points="18,46 40,34 60,34 18,58" fill="#1487C9"/><polygon points="0,68 18,58 40,46 18,46" fill="#63B22F"/><polygon points="40,34 60,34 40,46" fill="#ED6F26"/></svg><span>Оплатить через СБП</span></button>
+      <div class="ylp-note">Сбер, Т-Банк, ВТБ или любой банк России — откроется приложение банка</div>
+      <button class="ylp-b ylp-card" id="p-card"><span>Оплатить картой</span><span class="ylp-chips"><b class="ylp-mir">МИР</b><span class="ylp-mc"><i style="left:0;background:#eb001b"></i><i style="left:10px;background:#f79e1b;opacity:.9"></i></span><b class="ylp-visa">VISA</b></span></button>
+      <div class="ylp-note">Карта российского банка</div>
+      <button class="btn btn--main" id="p-pay" style="display:none">Да, я начинаю сегодня <span>→</span></button>
+      <div class="payhint" id="p-int-h" hidden>🌍 Карта другой страны — Казахстан, Узбекистан, Киргизия и др.</div>
       <button class="btn btn--ghost" id="p-int" hidden>Оплатить картой любой страны <span>→</span></button>
       <div class="trust"><span>✓ Один платёж</span><span>✓ Без подписки</span><span>✓ Доступ здесь, в боте</span></div>
     </div>
@@ -403,7 +410,13 @@ function paint(){if(!P)return;var set=TAR===3&&P.set,p=set?(on?P.set.low:P.set.f
   $("p-pay").innerHTML=(set?"Взять 3 практикума за "+rub(p):P_BTN)+" <span>→</span>";
   $("p-note").textContent=on?"Закроешь — будет "+rub(set?P.set.full:P.full)+". А всё останется как было.":"Спеццена закончилась. Сейчас — "+rub(p)+"."}
 [].forEach.call(document.querySelectorAll("#seg button"),function(b){b.onclick=function(){hap();TAR=+b.dataset.t;[].forEach.call($("seg").children,function(x){x.classList.toggle("on",x===b)});paint()}});
-$("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");var U=TAR===3&&P.set?P.set.pay:P.pay;PC_ARM=Date.now();PC_SHOWN=false;try{tg.openLink(U)}catch(e){location.href=U}/* оплата во внешнем браузере: в окне внутри Telegram форма Prodamus не работала (урок 14.11) */
+/* телефон и способ с нашего экрана (автор 17.11): Prodamus без своей формы */
+function phNorm(v){var d=(v||"").replace(/\D/g,"");if(d.length===11&&(d[0]==="7"||d[0]==="8"))d=d.slice(1);return /^9\d{9}$/.test(d)?d:""}
+try{var _sv=localStorage.getItem("yl_ph");if(_sv)$("p-ph").value=_sv}catch(e){}
+$("p-ph").addEventListener("input",function(){$("p-phb").classList.remove("err");$("p-pherr").style.display="none"});
+var PAYX="";function payM(m){return function(){if(!P)return;var d=phNorm($("p-ph").value);if(!d){$("p-phb").classList.add("err");$("p-pherr").style.display="block";hap("medium");try{$("p-ph").focus()}catch(e){}return}try{localStorage.setItem("yl_ph",$("p-ph").value)}catch(e){}PAYX="&ph=7"+d+"&m="+m;$("p-pay").onclick()}}
+$("p-sbp").onclick=payM("sbp");$("p-card").onclick=payM("card");
+$("p-pay").onclick=function(){if(!P)return;hap("medium");ev(TAR===3?"pay_click_set":"pay_click");var U=(TAR===3&&P.set?P.set.pay:P.pay)+PAYX;PC_ARM=Date.now();PC_SHOWN=false;try{tg.openLink(U)}catch(e){location.href=U}/* оплата во внешнем браузере: в окне внутри Telegram форма Prodamus не работала (урок 14.11) */
   clearInterval(poll);var until=Date.now()+30*6e4;poll=setInterval(function(){if(Date.now()>until){clearInterval(poll);return}api("state").then(function(d){if(d&&d.paid){clearInterval(poll);$("pf").hidden=true;$("pf-f").src="about:blank";show("s-ok");hap("ok")}})},4000)};
 function paidView(){$("seg").hidden=true;$("p-int").hidden=true;$("p-int-h").hidden=true;$("p-head").innerHTML="Практикум у тебя <em>уже открыт</em> 🤍";
   document.querySelector(".pbox").innerHTML='<p style="font-size:17px;margin-bottom:14px">«Денежный код: 14 дней» уже твой. Задание дня ждёт тебя в чате — нажми «Мой день».</p><button class="btn btn--main" onclick="try{Telegram.WebApp.close()}catch(e){}">Перейти в чат <span>→</span></button>'}
@@ -415,7 +428,7 @@ var PC={ask:"Вижу, ты дошла до оплаты, но что-то по�
  p:"Это обычная защищённая страница оплаты — через сервис Prodamus я принимаю оплату 🤍 Номер заказа там служебный. Впиши свой телефон — на него придёт чек, — выбери СБП, Сбер, Т-Банк или карту, и сразу откроется доступ в Telegram.",
  d:"Понимаю 🤍 Это 14 дней по 10–15 минут — меньше, чем стоит один обед в кафе. Цена держится ещё немного.",
  q:"Напиши свой вопрос в чат с ботом — отвечу там 🤍"};
-function pcPay(np){var U=(TAR===3&&P.set?P.set.pay:P.pay)+(np?"&np=1":"");try{tg.openLink(U)}catch(e){location.href=U}PC_ARM=Date.now();PC_SHOWN=false;$("pc").hidden=true}
+function pcPay(np){var U=(TAR===3&&P.set?P.set.pay:P.pay)+PAYX;try{tg.openLink(U)}catch(e){location.href=U}PC_ARM=Date.now();PC_SHOWN=false;$("pc").hidden=true}
 function pcView(html){$("pc-in").innerHTML=html;$("pc").hidden=false}
 function pcAsk(){pcView('<h3>Что помешало оплатить?</h3><p>'+PC.ask.replace(/:$/,'')+'</p>'+
  '<button class="opt2" data-k="o">Не открылась оплата</button><button class="opt2" data-k="c">Нет российской карты</button><button class="opt2" data-k="p">Страница оплаты непонятная</button><button class="opt2" data-k="d">Дорого</button><button class="opt2" data-k="q">Есть вопрос</button>')}
